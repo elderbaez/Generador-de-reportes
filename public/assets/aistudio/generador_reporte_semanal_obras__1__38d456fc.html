@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador de Reporte Semanal de Obras</title>
+<style>
+:root{
+  --navy:#0b455b; --yellow:#f4c84a; --blue:#1f6487; --green:#659d43;
+  --green-light:#a9c994; --ink:#18233a; --muted:#777f8b; --line:#dfe5ec;
+  --paper:#fff; --ui:#f3f5f8;
+}
+*{box-sizing:border-box}
+html{font-family:"Trebuchet MS",Trebuchet,Arial,sans-serif;color:var(--ink)}
+body{margin:0;background:var(--ui);font-size:12px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.appbar{background:var(--navy);color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.appbar h1{font-size:18px;margin:0 0 4px;font-weight:700}.appbar p{margin:0;color:#dce5f5;font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid #cbd4e0;background:white;color:var(--navy);border-radius:5px;padding:8px 12px;font-weight:bold}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#17233c}
+.btn.dark{background:var(--navy);color:#fff;border-color:var(--navy)}
+.workspace{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:16px;padding:16px;align-items:start;height:calc(100vh - 68px);min-height:420px}.editor{height:100%;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}.preview-wrap{height:100%;min-width:0;overflow:auto;overscroll-behavior:contain;padding-bottom:12px}
+.panel{background:#fff;border:1px solid #e1e6ed;border-radius:8px;overflow:hidden}
+.panel h2{margin:0;background:#e9edf3;color:var(--navy);font-size:13px;padding:10px 12px;border-bottom:1px solid #dce3ec}
+.panel-body{padding:12px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;min-width:0}
+.field label{font-weight:bold;color:#34425a;font-size:11px}
+input[type=text],input[type=date],input[type=number],select,textarea{width:100%;min-width:0;border:1px solid #cbd4df;border-radius:4px;padding:7px 8px;background:#fff;color:#202b3d}
+textarea{min-height:55px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.help{font-size:10px;color:#6d7786;line-height:1.4;margin:4px 0 10px}
+hr{border:0;border-top:1px solid #e2e7ed;margin:12px 0}
+.pending-item,.photo-item{border:1px solid #dce2e9;border-radius:5px;padding:9px;margin-bottom:8px;background:#fbfcfd}
+.pending-item .grid2{grid-template-columns:1fr 1fr}
+.photo-item{display:grid;grid-template-columns:76px 1fr;gap:9px;align-items:start}
+.photo-thumb{width:76px;height:76px;object-fit:contain;background:#eef1f5;border:1px solid #d8dee7}
+.photo-item .field{margin-bottom:6px}
+.photo-item .photo-actions{display:flex;gap:6px;justify-content:flex-end}
+.small-btn{border:1px solid #cbd4df;border-radius:4px;background:white;padding:5px 7px;font-size:10px}
+.preview-wrap{min-width:0;overflow:auto}
+.preview-note{font-size:11px;color:#687386;margin:0 0 8px}
+#report{width:210mm;min-height:297mm;background:white;margin:0 auto;box-shadow:0 2px 14px #18233a1a;color:#172033;position:relative}
+.report-header{height:28mm;background:var(--navy);color:white;display:grid;grid-template-columns:27mm 1fr 27mm;align-items:center;padding:3mm 6mm;gap:3mm;text-align:center}
+.logo{width:25mm;height:23mm;display:block;object-fit:contain;justify-self:center}
+.header-copy .director{font-size:9.5pt;font-weight:bold;line-height:1.15}
+.header-copy .project{font-size:13pt;line-height:1.13;font-weight:bold;color:#fff;margin:1mm 0;text-wrap:pretty}
+.header-copy .report-title{font-size:12pt;font-weight:bold;line-height:1.1;color:var(--yellow);letter-spacing:1.2px}
+.header-copy .asof{font-size:10pt;font-weight:bold;margin-top:1mm}
+.report-main{padding:4mm 6mm 5mm}
+.summary{display:grid;grid-template-columns:1.35fr 1.65fr;gap:5mm;align-items:start}
+.contract-info{font-size:10pt;line-height:1.5;overflow-wrap:anywhere}
+.info-line{margin:0 0 1.4mm}.info-label{color:#29466f;font-weight:bold}
+.measure-title{font-size:12pt;color:#555;margin:2mm 0 1mm}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr) 1.25fr;gap:2mm;align-items:start}
+.metric{text-align:center;min-width:0}
+.metric-label{font-size:7.5pt;color:#737373;font-weight:bold;min-height:8mm;display:flex;align-items:center;justify-content:center;text-transform:uppercase;line-height:1.1}
+.ring{width:24mm;height:24mm;max-width:100%;margin:0 auto;position:relative}
+.ring svg{width:100%;height:100%;display:block;transform:rotate(-90deg)}
+.ring .ring-value{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11pt;font-weight:bold;color:#111}
+.overall .metric-label{font-size:8pt;min-height:8mm}
+.overall-value{height:29mm;width:29mm;max-width:100%;margin:0 auto;border-radius:50%;background:#dedede;display:flex;align-items:center;justify-content:center;font-size:22pt;font-weight:bold;color:#385a28}
+.section-title{text-align:center;font-size:11.5pt;color:#174b60;font-weight:bold;letter-spacing:.7px;text-decoration:none;margin:5mm 0 3mm;padding:2mm 3mm;border-top:1.2px solid #b8cbd4;border-bottom:1.2px solid #b8cbd4;background:linear-gradient(90deg,#f4f8fa,#e9f1f4,#f4f8fa);border-radius:2mm;break-after:avoid}
+.situation{border-top:1px solid #dce3ec;padding-top:3mm}
+.progress-layout{display:grid;grid-template-columns:1fr 1fr;gap:7mm;align-items:start}
+.rubros{width:100%;border-collapse:collapse;font-size:8pt;table-layout:fixed}
+.rubros th{text-align:left;color:#999;font-size:7.5pt;padding:2mm 2mm;border-bottom:1.2px solid #2f466b}
+.rubros th:last-child,.rubros td:last-child{text-align:right;width:23%;white-space:nowrap}
+.rubros td{padding:1.6mm 2mm;border-bottom:1px solid #e8edf2;vertical-align:top;overflow-wrap:anywhere;line-height:1.25}
+.rubros tr.group-row td{font-weight:bold;color:#172033;padding-top:2mm}
+.rubros tr.sub-row td:first-child{padding-left:6mm;color:#33445e}
+.bar-chart{width:100%;min-height:65mm;overflow:hidden}
+.bar-chart svg{width:100%;height:auto;display:block}
+.pending-section{margin-top:5mm;break-inside:avoid}
+.pending-table{border-collapse:separate;border-spacing:0 1.2mm;width:100%;font-size:7.5pt;table-layout:fixed}
+.pending-table th{background:#e9edf4;color:#253a5a;text-align:left;padding:1.5mm;border:1px solid #ccd5e1}
+.pending-table td{padding:1.8mm 1.5mm;border-top:1px solid #d7dee7;border-bottom:1px solid #d7dee7;background:#fff;vertical-align:middle;overflow-wrap:anywhere}.pending-table td:first-child{border-left:1px solid #d7dee7;border-radius:2mm 0 0 2mm;text-align:center}.pending-table td:last-child{border-right:1px solid #d7dee7;border-radius:0 2mm 2mm 0}
+.pending-table th:nth-child(1){width:7%}.pending-table th:nth-child(2){width:39%}.pending-table th:nth-child(3){width:15%}.pending-table th:nth-child(4){width:10%}.pending-table th:nth-child(5){width:12%}.pending-table th:nth-child(6){width:17%}
+.impact{display:inline-flex;align-items:center;justify-content:center;min-width:13mm;text-align:center;border-radius:999px;padding:1.2mm 2mm;font-weight:bold;color:#111;white-space:nowrap;letter-spacing:.2px}
+.impact.alto{background:#ff3030;color:#fff}.impact.medio{background:#ffbd38}.impact.bajo{background:#65b96b;color:#fff}.impact.critico{background:#8d1d2c;color:#fff}
+.status{display:inline-block;background:#edf0f4;border:1px solid #d4dbe4;border-radius:2px;padding:1px 4px}
+.photos-section{margin-top:5mm;background:#f4f6f7;padding:3mm 1.5mm 4mm;break-inside:auto;border-top:1px solid #d9e1e5}
+.photos-heading{text-align:center;color:#174b60;font-size:11.5pt;font-weight:bold;letter-spacing:.7px;margin:0 0 3mm;padding:1.5mm;border-bottom:1px solid #c4d4db}
+.photos-grid{display:grid;gap:2mm;align-items:start}
+.photo-card{margin:0;border:1px solid #202020;background:white;min-width:0;break-inside:avoid}
+.photo-card img{display:block;width:100%;height:auto;max-height:100mm;object-fit:contain;background:#fff}
+.photo-card figcaption{border-top:1px solid #202020;text-align:center;padding:1.5mm 1mm;font-size:7.5pt;line-height:1.2;overflow-wrap:anywhere;min-height:5mm}
+.footer{display:flex;justify-content:flex-end;font-size:7pt;color:#888;padding:3mm 6mm}
+.empty{font-size:10px;color:#737e8e;font-style:italic}
+@media(max-width:1000px){.workspace{grid-template-columns:1fr;height:auto;min-height:0}.editor{height:auto;max-height:70vh;overflow-y:auto}.preview-wrap{height:75vh;overflow:auto}#report{margin:0}}
+@page{size:A4 portrait;margin:0}
+@media print{
+  body{background:white;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .appbar,.editor,.preview-note{display:none!important}
+  .workspace{display:block;padding:0;margin:0;height:auto;min-height:0}
+  .editor{display:none!important}
+  .preview-wrap{height:auto;overflow:visible;padding:0}
+  #report{width:210mm;min-height:297mm;margin:0;box-shadow:none}
+  .report-header,.summary,.section-title,.pending-section,.pending-table tr,.photo-card,.rubros tr,.metric{break-inside:avoid;page-break-inside:avoid}
+  .section-title{break-after:avoid;page-break-after:avoid}
+  .photos-section{break-inside:auto}
+  .photo-card img{max-height:78mm}
+  .pending-table{border-spacing:0 1mm}
+  .report-main{padding-bottom:3mm}
+  .photos-grid{align-items:start}
+}
+</style>
+</head>
+<body>
+<header class="appbar">
+ <div><h1>Generador de reporte semanal de obras</h1><p>Plantilla A4 · Importación CSV · Mediciones, pendientes y fotografías</p></div>
+ <div class="actions"><button class="btn" id="loadExample">Cargar ejemplo</button><button class="btn" id="saveHtml">Exportar HTML</button><button class="btn primary" id="printBtn">Imprimir / Guardar PDF</button></div>
+</header>
+<div class="workspace">
+ <aside class="editor">
+  <section class="panel"><h2>1. Datos de obra y contrato</h2><div class="panel-body">
+   <div class="field"><label>Dirección técnica</label><input id="director" type="text" value="DIRECCIÓN TÉCNICA - SUPERINTENDENCIA DE OBRAS - SO.DT"></div>
+   <div class="field"><label>Nombre de obra</label><textarea id="project">RESTAURACIÓN, RECUPERACIÓN Y REFORMA DE LA CATEDRAL SAN BLAS DE CIUDAD DEL ESTE</textarea></div>
+   <div class="grid2"><div class="field"><label>Fecha de toma de datos</label><input id="reportDate" type="date" value="2026-10-26"></div><div class="field"><label>Fecha de O.I.S.</label><input id="startDate" type="date" value="2026-10-14"></div></div>
+   <div class="field"><label>N.º y nombre de contrato</label><textarea id="contract">4500084818 – Restauración, Recuperación y Reforma de la Catedral San Blas de Ciudad del Este</textarea></div>
+   <div class="field"><label>Contratista</label><input id="contractor" type="text" value="CONSORCIO SAN BLAS"></div>
+   <div class="grid2"><div class="field"><label>Valor contrato + adendas (PYG)</label><input id="contractValue" type="text" value="18.921.072.142"></div><div class="field"><label>Medición acumulada (PYG)</label><input id="measurement" type="text" value="-"></div></div>
+  </div></section>
+  <section class="panel" style="margin-top:12px"><h2>2. Avance y rubros</h2><div class="panel-body">
+   <div class="grid3"><div class="field"><label>Avance de plazo %</label><input id="timeProgress" type="number" min="0" max="100" step=".01" value="0"></div><div class="field"><label>Avance financiero %</label><input id="financialProgress" type="number" min="0" max="100" step=".01" value="0"></div><div class="field"><label>Avance físico %</label><input id="physicalProgress" type="number" min="0" max="100" step=".01" value="7.2"></div></div>
+   <div class="field"><label>Importar CSV del diario de obra</label><input id="csvFile" type="file" accept=".csv,text/csv"></div>
+   <p class="help">Se reconocen las columnas del CSV de ejemplo: Item, Descrição, Etapa y Porcentagem (también equivalentes en español). Si el archivo usa punto y coma o coma como separador, se intenta detectar automáticamente.</p>
+   <div class="actions"><button class="btn dark" id="addRubric">+ Añadir rubro</button><button class="btn" id="clearRubrics">Vaciar rubros</button></div>
+   <div id="rubricEditor"></div>
+  </div></section>
+  <section class="panel" style="margin-top:12px"><h2>3. Pendencias</h2><div class="panel-body">
+   <p class="help">Cada pendiente incluye responsable, plazo e estado, además de una etiqueta de impacto con color.</p>
+   <button class="btn dark" id="addPending">+ Añadir pendencia</button><div id="pendingEditor" style="margin-top:9px"></div>
+  </div></section>
+  <section class="panel" style="margin-top:12px"><h2>4. Fotografías de situación actual</h2><div class="panel-body">
+   <div class="grid2"><div class="field"><label>Columnas de fotos</label><select id="photoColumns"><option value="1">1 columna</option><option value="2" selected>2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option></select></div><div class="field"><label>Altura máxima por foto en impresión</label><select id="photoHeight"><option value="65">65 mm</option><option value="80" selected>80 mm</option><option value="92">92 mm</option><option value="110">110 mm</option></select></div></div>
+   <div class="field"><label>Agregar fotografías (cantidad ilimitada)</label><input id="photoFiles" type="file" accept="image/*" multiple></div>
+   <p class="help">Las fotos mantienen su proporción original: no se recortan ni se estiran. Añade una descripción para cada una. Para muchas fotos, el reporte se extenderá a páginas A4 adicionales.</p>
+   <button class="btn" id="addPhotoPlaceholder">+ Añadir foto desde archivo</button><div id="photoEditor" style="margin-top:9px"></div>
+  </div></section>
+ </aside>
+ <main class="preview-wrap"><p class="preview-note">Vista previa de impresión A4. El contenido se actualiza al editar los campos. Para obtener el PDF, pulsa “Imprimir / Guardar PDF” y selecciona papel A4, escala 100 % y márgenes ninguno.</p>
+ <article id="report">
+  <header class="report-header">
+   <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Logo_Itaipu_Preferencial.svg" alt="Itaipu Binacional" style="filter:brightness(0) invert(1);object-fit:contain" referrerpolicy="no-referrer">
+   <div class="header-copy"><div class="director" id="outDirector"></div><div class="project" id="outProject"></div><div class="report-title">REPORTE</div><div class="asof" id="outDate"></div></div><div></div>
+  </header>
+  <div class="report-main">
+   <section class="summary">
+    <div class="contract-info">
+     <p class="info-line"><span class="info-label">Contrato:</span> <span id="outContract"></span></p>
+     <p class="info-line"><span class="info-label">Contratista:</span> <span id="outContractor"></span></p>
+     <p class="info-line"><span class="info-label">Valor del contrato+Aditivos:</span><br><span id="outValue"></span></p>
+     <p class="info-line"><span class="info-label">Fecha de O.I.S.:</span> <span id="outStartDate"></span></p>
+     <div class="measure-title">MEDICIONES</div><p class="info-line"><span class="info-label">Valor medición acumulada:</span> <span id="outMeasurement"></span></p>
+    </div>
+    <div class="metrics" id="metrics"></div>
+   </section>
+   <div class="section-title">SITUACIÓN ACTUAL</div>
+   <section class="situation"><div class="progress-layout"><div id="rubricTable"></div><div class="bar-chart" id="barChart"></div></div></section>
+   <section class="pending-section" id="pendingSection"><div class="section-title">PENDENCIAS Y SITUACIONES RELEVANTES</div><div id="pendingTable"></div></section>
+  </div>
+  <section class="photos-section"><h2 class="photos-heading">FOTOGRAFÍAS DE SITUACIÓN ACTUAL</h2><div class="photos-grid" id="photosGrid"></div></section>
+  <footer class="footer"><span id="pageFooter">Reporte semanal de obras</span></footer>
+ </article></main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let rubrics=[], pendings=[], photos=[], nextId=1;
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtDate(v){if(!v)return '—';const p=v.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v}
+function parsePercent(v){let s=String(v??'').replace(/["%]/g,'').trim().replace(',','.');const n=parseFloat(s);return Number.isFinite(n)?Math.max(0,Math.min(100,n)):0}
+function setField(id,val){$(id).value=val}
+function renderRubricEditor(){
+ $('rubricEditor').innerHTML=rubrics.map((r,i)=>`<div class="pending-item"><div class="grid2"><div class="field"><label>Ítem</label><input data-r="${i}" data-k="item" value="${escapeHtml(r.item)}"></div><div class="field"><label>Avance %</label><input data-r="${i}" data-k="percent" type="number" min="0" max="100" step=".01" value="${r.percent}"></div></div><div class="field"><label>Descripción</label><input data-r="${i}" data-k="description" value="${escapeHtml(r.description)}"></div><label><input type="checkbox" data-r="${i}" data-k="group" ${r.group?'checked':''}> Es rubro principal / etapa</label> <button class="small-btn" data-del-r="${i}">Eliminar</button></div>`).join('');
+ $('rubricEditor').querySelectorAll('[data-r]').forEach(el=>el.addEventListener('change',()=>{const r=rubrics[+el.dataset.r],k=el.dataset.k;r[k]=k==='group'?el.checked:(k==='percent'?parsePercent(el.value):el.value);renderReport()}));
+ $('rubricEditor').querySelectorAll('[data-del-r]').forEach(el=>el.onclick=()=>{rubrics.splice(+el.dataset.delR,1);renderRubricEditor();renderReport()});
+}
+function addRubric(r={item:'',description:'Nuevo rubro',percent:0,group:false}){rubrics.push({...r});renderRubricEditor();renderReport()}
+function renderPendingEditor(){
+ $('pendingEditor').innerHTML=pendings.map((p,i)=>`<div class="pending-item">
+ <div class="field"><label>Descripción</label><textarea data-p="${i}" data-k="description">${escapeHtml(p.description)}</textarea></div>
+ <div class="grid2"><div class="field"><label>Responsable</label><input data-p="${i}" data-k="responsible" value="${escapeHtml(p.responsible)}"></div><div class="field"><label>Plazo</label><input data-p="${i}" data-k="deadline" value="${escapeHtml(p.deadline)}" placeholder="Ej. 30/10/2026"></div></div>
+ <div class="grid2"><div class="field"><label>Impacto</label><select data-p="${i}" data-k="impact">${['ALTO','MEDIO','BAJO','CRÍTICO'].map(x=>`<option ${p.impact===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Estado</label><select data-p="${i}" data-k="status">${['En análisis','Pendiente','En ejecución','Aguardando respuesta','Resuelto','Vencido'].map(x=>`<option ${p.status===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
+ <button class="small-btn" data-del-p="${i}">Eliminar pendencia</button></div>`).join('');
+ $('pendingEditor').querySelectorAll('[data-p]').forEach(el=>el.addEventListener('change',()=>{pendings[+el.dataset.p][el.dataset.k]=el.value;renderReport()}));
+ $('pendingEditor').querySelectorAll('[data-del-p]').forEach(el=>el.onclick=()=>{pendings.splice(+el.dataset.delP,1);renderPendingEditor();renderReport()});
+}
+function addPending(){pendings.push({description:'',responsible:'',deadline:'',impact:'ALTO',status:'En análisis'});renderPendingEditor();renderReport()}
+function renderPhotoEditor(){
+ $('photoEditor').innerHTML=photos.map((p,i)=>`<div class="photo-item"><img class="photo-thumb" src="${p.src}" alt=""><div><div class="field"><label>Descripción / pie de foto</label><textarea data-ph="${i}" data-k="caption">${escapeHtml(p.caption)}</textarea></div><div class="photo-actions"><button class="small-btn" data-up="${i}">↑</button><button class="small-btn" data-down="${i}">↓</button><button class="small-btn" data-del-ph="${i}">Eliminar</button></div></div></div>`).join('');
+ $('photoEditor').querySelectorAll('[data-ph]').forEach(el=>el.addEventListener('input',()=>{photos[+el.dataset.ph].caption=el.value;renderPhotos()}));
+ $('photoEditor').querySelectorAll('[data-del-ph]').forEach(el=>el.onclick=()=>{photos.splice(+el.dataset.delPh,1);renderPhotoEditor();renderPhotos()});
+ $('photoEditor').querySelectorAll('[data-up]').forEach(el=>el.onclick=()=>movePhoto(+el.dataset.up,-1));
+ $('photoEditor').querySelectorAll('[data-down]').forEach(el=>el.onclick=()=>movePhoto(+el.dataset.down,1));
+}
+function movePhoto(i,d){const j=i+d;if(j<0||j>=photos.length)return;[photos[i],photos[j]]=[photos[j],photos[i]];renderPhotoEditor();renderPhotos()}
+function addPhotoFiles(files){[...files].forEach(file=>{if(!file.type.startsWith('image/'))return;const reader=new FileReader();reader.onload=e=>{photos.push({src:e.target.result,caption:file.name.replace(/\.[^.]+$/,'')});renderPhotoEditor();renderPhotos()};reader.readAsDataURL(file)})}
+function ring(label,value){const v=parsePercent(value),r=43,c=2*Math.PI*r,offset=c*(1-v/100);return `<div class="metric"><div class="metric-label">${label}</div><div class="ring"><svg viewBox="0 0 100 100" aria-label="${label} ${v}%"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#e4e8ec" stroke-width="17"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="#659d43" stroke-width="17" stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="butt"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="#a9c994" stroke-width="17" stroke-dasharray="${c*.055} ${c*.945}" stroke-dashoffset="${-c*.0}"/></svg><div class="ring-value">${v.toLocaleString('es-PY',{maximumFractionDigits:2})}</div></div></div>`}
+function renderMetrics(){const t=$('timeProgress').value||0,f=$('financialProgress').value||0,p=$('physicalProgress').value||0;$('metrics').innerHTML=ring('AVANCE DE PLAZO',t)+ring('AVANCE FINANCIERO',f)+ring('AVANCE FÍSICO',p)+`<div class="metric overall"><div class="metric-label">AVANCE GENERAL<br>DEL PROYECTO</div><div class="overall-value">${parsePercent(p).toLocaleString('es-PY',{maximumFractionDigits:2})}%</div></div>`}
+function renderRubrics(){
+ const rows=rubrics.map(r=>`<tr class="${r.group?'group-row':'sub-row'}"><td>${escapeHtml((r.item?r.item+' ':'')+r.description)}</td><td>${parsePercent(r.percent).toLocaleString('es-PY',{maximumFractionDigits:2})}%</td></tr>`).join('');
+ $('rubricTable').innerHTML=`<table class="rubros"><thead><tr><th>RUBROS</th><th>AVANCE (%)</th></tr></thead><tbody>${rows||'<tr><td colspan="2" class="empty">Importa el CSV o añade rubros para mostrar el avance.</td></tr>'}</tbody></table>`;
+ const width=500,height=Math.max(190,rubrics.length*37+40),left=220,right=12,top=14,plot=width-left-right,rowH=(height-30)/Math.max(1,rubrics.length);
+ let svg=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Gráfico de barras de avance"><rect width="${width}" height="${height}" fill="#fff"/>`;
+ for(let t=0;t<=100;t+=10){let x=left+plot*t/100;svg+=`<line x1="${x}" y1="${top}" x2="${x}" y2="${height-20}" stroke="#dce2e9" stroke-width="1"/><text x="${x}" y="${height-5}" fill="#7b8490" font-size="10" text-anchor="middle">${t}%</text>`}
+ rubrics.forEach((r,i)=>{let y=top+i*rowH+rowH*.22,bh=Math.min(21,rowH*.55),v=parsePercent(r.percent),label=(r.item?r.item+' ':'')+r.description; if(label.length>32)label=label.slice(0,30)+'…';svg+=`<text x="${left-8}" y="${y+bh*.78}" font-size="10" fill="#637080" text-anchor="end">${escapeHtml(label)}</text><rect x="${left}" y="${y}" width="${Math.max(v?2:0,plot*v/100)}" height="${bh}" fill="#216789"/><text x="${left+Math.max(v?2:0,plot*v/100)-5}" y="${y+bh*.72}" fill="${v>12?'#fff':'#216789'}" font-size="10" font-weight="bold" text-anchor="${v>12?'end':'start'}">${v.toLocaleString('es-PY',{maximumFractionDigits:2})}%</text>`});
+ svg+='</svg>';$('barChart').innerHTML=svg;
+}
+function renderPendings(){
+ $('pendingSection').style.display=pendings.length?'block':'none';
+ $('pendingTable').innerHTML=pendings.length?`<table class="pending-table"><thead><tr><th>N.º</th><th>Descripción</th><th>Responsable</th><th>Plazo</th><th>Impacto</th><th>Estado</th></tr></thead><tbody>${pendings.map((p,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(p.description||'—')}</td><td>${escapeHtml(p.responsible||'—')}</td><td>${escapeHtml(p.deadline||'—')}</td><td><span class="impact ${p.impact.toLowerCase().replace('í','i')}">${escapeHtml(p.impact)}</span></td><td><span class="status">${escapeHtml(p.status)}</span></td></tr>`).join('')}</tbody></table>`:'';
+}
+function renderPhotos(){
+ $('photosGrid').style.gridTemplateColumns=`repeat(${$('photoColumns').value},minmax(0,1fr))`;
+ $('photosGrid').innerHTML=photos.length?photos.map(p=>`<figure class="photo-card"><img src="${p.src}" alt="${escapeHtml(p.caption)}" style="max-height:${$('photoHeight').value}mm"><figcaption>${escapeHtml(p.caption||'')}</figcaption></figure>`).join(''):'<div class="empty">Añade fotografías para mostrar aquí el registro visual de la obra.</div>';
+}
+function renderReport(){
+ $('outDirector').textContent=$('director').value;$('outProject').textContent=$('project').value;$('outDate').textContent='Fecha de toma de datos: al '+fmtDate($('reportDate').value);
+ $('outContract').textContent=$('contract').value;$('outContractor').textContent=$('contractor').value;$('outValue').textContent='PYG '+$('contractValue').value;$('outMeasurement').textContent='PYG '+$('measurement').value;$('outStartDate').textContent=fmtDate($('startDate').value);
+ renderMetrics();renderRubrics();renderPendings();renderPhotos();
+}
+function parseCSV(text){
+ const first=(text.split(/\r?\n/).find(l=>l.trim())||'');let delim=';';if((first.match(/;/g)||[]).length<(first.match(/,/g)||[]).length)delim=',';if((first.match(/\t/g)||[]).length>(first.match(new RegExp(delim,'g'))||[]).length)delim='\t';
+ const rows=[];let row=[],cell='',quoted=false;
+ for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'&&quoted&&text[i+1]==='"'){cell+='"';i++}else if(c==='"')quoted=!quoted;else if(c===delim&&!quoted){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}else cell+=c}
+ row.push(cell);if(row.some(x=>x.trim()))rows.push(row);if(!rows.length)return [];
+ const norm=s=>String(s).replace(/^\uFEFF/,'').replace(/^="?|"?$/g,'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ const heads=rows.shift().map(norm),idx=(...names)=>heads.findIndex(h=>names.includes(h));
+ const ii=idx('item','n item','nº','numero','codigo'),id=idx('descricao','description','rubro','atividade'),ig=idx('etapa','group','tipo'),ip=idx('porcentagem','porcentaje','percentual','avance (%)','avance','percent','progresso');
+ return rows.map(r=>{const get=i=>i>=0?(r[i]||'').replace(/^="?|"?$/g,'').trim():'';const group=norm(get(ig))==='etapa'||norm(get(ig))==='grupo';return {item:get(ii),description:get(id),percent:parsePercent(get(ip)),group}}).filter(r=>(r.description||r.item) && r.percent>0)
+}
+$('csvFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{const imported=parseCSV(ev.target.result);if(!imported.length){alert('No se encontraron tareas con avance mayor que 0 %. Se ignoraron las tareas sin avance. Verifica las columnas Item, Descrição y Porcentagem.');return}rubrics=imported;renderRubricEditor();renderReport()};reader.readAsText(f,'UTF-8')});
+$('photoFiles').addEventListener('change',e=>{addPhotoFiles(e.target.files);e.target.value=''});
+$('addPhotoPlaceholder').onclick=()=> $('photoFiles').click();
+$('addRubric').onclick=()=>addRubric();$('clearRubrics').onclick=()=>{rubrics=[];renderRubricEditor();renderReport()};
+$('addPending').onclick=addPending;$('photoColumns').onchange=renderPhotos;$('photoHeight').onchange=renderPhotos;$('printBtn').onclick=()=>window.print();
+document.querySelectorAll('.editor input:not([type=file]),.editor textarea,.editor select').forEach(el=>{if(!el.dataset.r&&!el.dataset.p&&!el.dataset.ph)el.addEventListener('input',renderReport)});
+$('saveHtml').onclick=()=>{const clone=document.documentElement.cloneNode(true);clone.querySelector('.appbar')?.remove();clone.querySelector('.editor')?.remove();const data='<!DOCTYPE html>\n'+clone.outerHTML;const blob=new Blob([data],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reporte_semanal_obra.html';a.click();URL.revokeObjectURL(a.href)};
+$('loadExample').onclick=()=>{rubrics=[
+{item:'1.0',description:'Obras previas (Periodo de movilización)',percent:33.25,group:true},{item:'1.1',description:'Obrador',percent:33,group:false},{item:'1.2',description:'Vallado',percent:100,group:false},{item:'2.0',description:'Demolición y desmontaje',percent:40.8,group:true},{item:'2.1',description:'Instalaciones previas para inicio de desmontaje',percent:6,group:false},{item:'2.2',description:'Desmontaje de techo (Cubierta y estructura de techo)',percent:60,group:false},{item:'2.4',description:'Demoliciones internas (demolición de pisos y desmontaje de instalaciones)',percent:38,group:false},{item:'2.5',description:'Desmontaje de cerramiento de Durlock y vitrales en fachada principal',percent:100,group:false},{item:'3.2',description:'Patología del hormigón',percent:.06,group:true},{item:'3.2.1',description:'Retiro de revoque y recubrimiento, reconstrucción con mortero proyectado (vigas color verde)',percent:1,group:false}];pendings=[{description:'Pontillón de hormigón armado - Presentación de detalles solicitados sobre fundación',responsible:'Tecnoedil',deadline:'13/03/2026',impact:'ALTO',status:'En análisis'}];renderRubricEditor();renderPendingEditor();renderReport()};
+addRubric({item:'1.0',description:'Obras previas (Periodo de movilización)',percent:33.25,group:true});
+addRubric({item:'1.1',description:'Obrador',percent:33,group:false});
+addPending();
+renderReport();
+</script>
+</body>
+</html>

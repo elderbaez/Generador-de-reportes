@@ -1,0 +1,6 @@
+{
+  "name": "Generador de Reporte Semanal de Obras A4",
+  "description": "Generador interactivo de reportes de obra en formato A4 con vista previa de hojas reales, bloques modulares reordenables, cuadro redondeado de pendencias y gráficos de avance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
