@@ -1,6 +1,5 @@
 {
   "name": "Generador de Reportes",
   "description": "Generador interactivo de reportes de obra: hojas reales en el tamaño de papel que elijas, bloques modulares reordenables, fotos, tablas, textos con formato, clima, curva S y gráficos de avance; exporta a PDF.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": []
 }
