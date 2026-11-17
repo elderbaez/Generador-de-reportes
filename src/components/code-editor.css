@@ -1,0 +1,39 @@
+/* Editor de CSS (textarea transparente sobre texto coloreado) */
+.ce-root { position: relative; display: flex; border: 1px solid #1e293b; border-radius: 10px; overflow: hidden; background: #0f172a; height: 100%; }
+.ce-gutter { flex-shrink: 0; width: 38px; padding: 8px 0; overflow: hidden; background: #0b1222; color: #475569; text-align: right; font: 12px/18px ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; user-select: none; }
+.ce-gutter > div { padding-right: 8px; height: 18px; }
+.ce-body { position: relative; flex: 1; min-width: 0; }
+.ce-pre, .ce-ta {
+  position: absolute; inset: 0; margin: 0; padding: 8px; border: 0; box-sizing: border-box;
+  font: 12px/18px ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: 0; tab-size: 2; white-space: pre; overflow: auto; word-wrap: normal;
+}
+.ce-pre { color: #cbd5e1; pointer-events: none; overflow: hidden; }
+.ce-ta { background: transparent; color: transparent; caret-color: #f8fafc; resize: none; outline: none; }
+.ce-ta::selection { background: rgba(56,189,248,.28); color: transparent; }
+.ce-root.ro .ce-ta { caret-color: transparent; }
+.ce-measure { position: absolute; visibility: hidden; white-space: pre; }
+.ce-placeholder { position: absolute; left: 8px; top: 8px; right: 8px; color: #475569; font: italic 12px/18px ui-monospace, monospace; pointer-events: none; white-space: pre-wrap; }
+
+/* Colores de sintaxis */
+.ce-c { color: #64748b; font-style: italic; }
+.ce-s { color: #a5d6a7; }
+.ce-p { color: #94a3b8; }
+.ce-at { color: #f472b6; }
+.ce-sel { color: #e2e8f0; }
+.ce-cls { color: #fbbf24; }
+.ce-pseudo { color: #c084fc; }
+.ce-prop { color: #7dd3fc; }
+.ce-var { color: #5eead4; }
+.ce-num { color: #fda4af; }
+.ce-fn { color: #93c5fd; }
+.ce-imp { color: #f87171; font-weight: 700; }
+.ce-hex { color: #fde68a; box-shadow: inset 0 -3px 0 var(--sw); }
+
+/* Autocompletado */
+.ce-menu { position: absolute; z-index: 5; min-width: 260px; max-width: 420px; max-height: 240px; overflow: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 9px; box-shadow: 0 12px 30px rgba(2,6,23,.35); padding: 4px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+.ce-opt { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+.ce-opt.on { background: #e0f2fe; }
+.ce-opt-l { font: 600 11.5px ui-monospace, monospace; color: #0f172a; white-space: nowrap; }
+.ce-opt-d { font-size: 10.5px; color: #64748b; text-align: right; }
+.ce-menu-foot { margin-top: 3px; padding: 4px 8px 2px; border-top: 1px solid #f1f5f9; font-size: 9.5px; color: #94a3b8; }

@@ -1,0 +1,198 @@
+/* =====================================================================
+   Módulo de Observaciones: estilos de énfasis
+   Los colores de los avisos salen del tema (Ajustes → "Observaciones con
+   énfasis"): --rp-obs-info, --rp-obs-warn, --rp-obs-critical, --rp-obs-ok.
+   Todo es vectorial (sin filter): se imprime nítido.
+   ===================================================================== */
+
+.rp-obs { font-size: 8pt; line-height: 1.6; color: #334155; }
+.rp-obs-body { margin: 0; }
+.rp-obs-empty { margin: 0; font-style: italic; color: #94a3b8; }
+
+/* Campo de edición, común a todos los estilos */
+.rp-obs-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px;
+  font: inherit;
+  font-size: 8pt;
+  font-weight: 500;
+  color: #1e293b;
+  outline: none;
+  resize: vertical;
+}
+.rp-obs-input:focus { border-color: var(--rp-primary); }
+.rp-obs-input.is-mono { font-family: var(--rp-font-num, ui-monospace, monospace); font-size: 7.5pt; }
+
+/* ---------- Cita ---------- */
+.rp-obs--quote {
+  position: relative;
+  margin: 0;
+  padding: 6px 14px 6px 34px;
+  border-left: 3px solid var(--rp-primary);
+  background: linear-gradient(90deg, var(--rp-primary-soft, #eef4f7), rgba(255, 255, 255, 0) 70%);
+  border-radius: 0 var(--rp-radius-sm, 4px) var(--rp-radius-sm, 4px) 0;
+}
+.rp-obs--quote .rp-obs-mark {
+  position: absolute;
+  left: 9px;
+  top: 7px;
+  color: var(--rp-primary);
+  opacity: .55;
+}
+.rp-obs--quote .rp-obs-mark svg { width: 17px; height: 17px; fill: currentColor; stroke-width: 0; }
+.rp-obs--quote blockquote {
+  margin: 0;
+  font-size: 9pt;
+  font-style: italic;
+  line-height: 1.55;
+  color: #1e293b;
+}
+.rp-obs-attr {
+  margin-top: 4px;
+  text-align: right;
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: var(--rp-label, #475569);
+  letter-spacing: .02em;
+}
+.rp-obs-attr-cell { display: inline; }
+
+/* ---------- Código ---------- */
+.rp-obs--code {
+  border: 1px solid var(--rp-line, #e2e8f0);
+  border-radius: var(--rp-radius-sm, 4px);
+  background: #f8fafc;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp-obs-codehead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 9px;
+  background: var(--rp-surface-2, #f1f5f9);
+  border-bottom: 1px solid var(--rp-line, #e2e8f0);
+}
+.rp-obs-dots { display: inline-flex; gap: 4px; }
+.rp-obs-dots i { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; }
+.rp-obs-dots i:nth-child(1) { background: #f87171; }
+.rp-obs-dots i:nth-child(2) { background: #fbbf24; }
+.rp-obs-dots i:nth-child(3) { background: #34d399; }
+.rp-obs--code .rp-obs-label {
+  font-family: var(--rp-font-num, ui-monospace, monospace);
+  font-size: 7pt;
+  font-weight: 600;
+  color: #64748b;
+}
+.rp-obs--code ol {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  counter-reset: ln;
+  font-family: var(--rp-font-num, ui-monospace, monospace);
+  font-size: 7.5pt;
+  line-height: 1.6;
+}
+.rp-obs--code li {
+  counter-increment: ln;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 8px;
+  padding-right: 10px;
+}
+.rp-obs--code li::before {
+  content: counter(ln);
+  text-align: right;
+  color: #94a3b8;
+  border-right: 1px solid var(--rp-line, #e2e8f0);
+  padding-right: 6px;
+}
+.rp-obs--code code { font: inherit; color: #0f172a; white-space: pre-wrap; word-break: break-word; }
+.rp-obs--code .rp-obs-input,
+.rp-obs--code .rp-obs-empty { margin: 6px 9px; width: calc(100% - 18px); }
+
+/* ---------- Lista ---------- */
+.rp-obs--list .rp-obs-label {
+  display: block;
+  font-weight: 700;
+  color: var(--rp-label, #1f4e66);
+  margin-bottom: 3px;
+}
+.rp-obs--list ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: it;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rp-obs--list li {
+  counter-increment: it;
+  position: relative;
+  padding: 3px 8px 3px 26px;
+  border-bottom: 1px solid var(--rp-line, #e2e8f0);
+}
+.rp-obs--list li:last-child { border-bottom: 0; }
+.rp-obs--list li::before {
+  content: counter(it);
+  position: absolute;
+  left: 2px;
+  top: 3.5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--rp-primary);
+  color: #fff;
+  font-size: 7pt;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: center;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------- Avisos (Información, Advertencia, Importante, Conforme) ---------- */
+.rp-obs--callout {
+  --obs-c: var(--rp-obs-info, #2563eb);
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  padding: 8px 12px 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--obs-c) 35%, transparent);
+  border-radius: var(--rp-radius-sm, 4px);
+  background: color-mix(in srgb, var(--obs-c) 7%, #fff);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp-obs--info     { --obs-c: var(--rp-obs-info, #2563eb); }
+.rp-obs--warning  { --obs-c: var(--rp-obs-warn, #d97706); }
+.rp-obs--critical { --obs-c: var(--rp-obs-critical, #dc2626); }
+.rp-obs--success  { --obs-c: var(--rp-obs-ok, #059669); }
+
+.rp-obs-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--obs-c) 15%, #fff);
+  color: var(--obs-c);
+}
+.rp-obs-icon svg { width: 13px; height: 13px; }
+.rp-obs--callout .rp-obs-label {
+  display: block;
+  font-weight: 800;
+  font-size: 8pt;
+  color: color-mix(in srgb, var(--obs-c) 80%, #000);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin: 2px 0 1px;
+}
+.rp-obs--callout .rp-obs-body { color: #1e293b; }

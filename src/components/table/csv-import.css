@@ -1,0 +1,66 @@
+/* Ventana de importación CSV (misma paleta que el resto del programa) */
+.csvi-overlay { position: fixed; inset: 0; z-index: 1400; background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 16px; font-family: inherit; }
+.csvi-modal { width: min(820px, 100%); max-height: 90vh; display: flex; flex-direction: column; background: #fff; border-radius: 14px; box-shadow: 0 25px 60px rgba(2, 20, 30, .35); overflow: hidden; color: #1e293b; }
+.csvi-modal svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.csvi-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px 10px; }
+.csvi-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #94a3b8; }
+.csvi-head h2 { margin: 3px 0 0; font-size: 17px; font-weight: 800; color: #0b455b; }
+.csvi-close { border: 0; background: transparent; color: #64748b; padding: 6px; border-radius: 8px; cursor: pointer; display: inline-flex; }
+.csvi-close:hover { background: #f1f5f9; color: #0f172a; }
+
+.csvi-tabs { display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid #e2e8f0; }
+.csvi-tabs button { border: 0; background: transparent; padding: 9px 12px; font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; }
+.csvi-tabs button:hover { color: #0b455b; }
+.csvi-tabs button.on { color: #0b455b; border-bottom-color: #0b455b; }
+
+.csvi-body { padding: 16px 20px; overflow: auto; display: flex; flex-direction: column; gap: 14px; }
+
+.csvi-drop { border: 1.5px dashed #cbd5e1; border-radius: 12px; background: #f8fafc; padding: 22px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: background-color .15s, border-color .15s; text-align: left; }
+.csvi-drop:hover, .csvi-drop.over { border-color: #0b455b; background: #f0f7f9; }
+.csvi-drop.loaded { justify-content: flex-start; border-style: solid; background: #f0f7f9; border-color: #b8cbd4; }
+.csvi-drop .csvi-drop-ic { width: 26px; height: 26px; color: #0b455b; }
+.csvi-drop b { display: block; font-size: 13px; color: #0f172a; }
+.csvi-drop span { display: block; font-size: 11px; color: #64748b; margin-top: 2px; }
+
+.csvi-paste { width: 100%; min-height: 120px; resize: vertical; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; font-family: ui-monospace, monospace; font-size: 11.5px; color: #0f172a; outline: none; box-sizing: border-box; }
+.csvi-paste:focus { border-color: #0b455b; box-shadow: 0 0 0 3px rgba(11, 69, 91, .12); }
+
+.csvi-options { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.csvi-options label { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 170px; }
+.csvi-options label.csvi-narrow { flex: 0 0 110px; min-width: 110px; }
+.csvi-options label > span { font-size: 10.5px; font-weight: 700; color: #64748b; }
+.csvi-options select, .csvi-options input[type=number] { height: 32px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0 8px; font-size: 12px; font-weight: 600; color: #0f172a; background: #fff; font-family: inherit; outline: none; box-sizing: border-box; width: 100%; }
+.csvi-options select:focus, .csvi-options input:focus { border-color: #0b455b; box-shadow: 0 0 0 3px rgba(11, 69, 91, .12); }
+.csvi-options label.csvi-check { flex-direction: row; align-items: center; gap: 6px; flex: 0 0 auto; min-width: 0; height: 32px; cursor: pointer; }
+.csvi-options label.csvi-check span { font-size: 11.5px; font-weight: 600; color: #334155; }
+.csvi-check input { accent-color: #0b455b; margin: 0; }
+
+.csvi-preview { border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; }
+.csvi-preview-scroll { overflow: auto; max-height: 300px; }
+.csvi-preview table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 11px; }
+.csvi-preview th { position: sticky; top: 0; background: #e9edf4; padding: 6px; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; text-align: left; vertical-align: top; min-width: 120px; z-index: 1; }
+.csvi-preview th:last-child, .csvi-preview td:last-child { border-right: 0; }
+.csvi-preview th select { width: 100%; height: 28px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0 6px; font-size: 11px; font-weight: 700; color: #64748b; background: #fff; font-family: inherit; cursor: pointer; }
+.csvi-preview th.mapped select { color: #0b455b; border-color: #0b455b; background: #f0f7f9; }
+.csvi-colname { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.csvi-preview td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; color: #94a3b8; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; font-family: ui-monospace, monospace; }
+.csvi-preview td.mapped { color: #0f172a; }
+.csvi-preview tr:last-child td { border-bottom: 0; }
+.csvi-empty { color: #cbd5e1; }
+.csvi-more { padding: 6px 10px; font-size: 10.5px; color: #94a3b8; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+.csvi-hint { font-size: 11.5px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
+.csvi-hint b { color: #0b455b; }
+
+.csvi-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+.csvi-link { border: 0; background: transparent; color: #0b455b; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; padding: 6px 4px; font-family: inherit; }
+.csvi-link:hover { text-decoration: underline; }
+.csvi-foot-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.csvi-summary { font-size: 11.5px; color: #475569; }
+.csvi-summary b { color: #0f172a; }
+.csvi-seg { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 2px; gap: 2px; }
+.csvi-seg button { border: 0; background: transparent; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #475569; cursor: pointer; font-family: inherit; }
+.csvi-seg button.on { background: #fff; color: #0b455b; box-shadow: 0 1px 2px rgba(15, 23, 42, .1); }
+.csvi-primary { border: 0; background: #059669; color: #fff; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-family: inherit; transition: background-color .15s; }
+.csvi-primary:hover { background: #047857; }
+.csvi-primary:disabled { background: #cbd5e1; cursor: not-allowed; }

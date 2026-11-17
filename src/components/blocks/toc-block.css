@@ -1,0 +1,11 @@
+/* Índice (TocBlock). Selectores de una clase: los temas (:scope .rp-toc-…) ganan. */
+.rp-toc { list-style: none; margin: 0; padding: 1mm 2mm 0; display: flex; flex-direction: column; gap: 1.2mm; }
+.rp-toc-row { display: flex; align-items: baseline; gap: 2mm; font-size: 9pt; color: var(--rp-text, #172033); break-inside: avoid; }
+.rp-toc-row--main { font-weight: 700; margin-top: 1.2mm; }
+.rp-toc-row--main:first-child { margin-top: 0; }
+.rp-toc-row--sub { font-size: 8.5pt; font-weight: 500; padding-left: 7mm; color: #475569; }
+.rp-toc-num { color: var(--rp-primary, #0b455b); font-weight: 800; min-width: 5mm; }
+.rp-toc-title { flex-shrink: 1; min-width: 0; }
+.rp-toc-dots { flex: 1; min-width: 6mm; border-bottom: 1px dotted #94a3b8; transform: translateY(-1mm); }
+.rp-toc-page { font-family: var(--rp-font-num, inherit); font-variant-numeric: tabular-nums; font-weight: 700; color: var(--rp-primary, #0b455b); min-width: 6mm; text-align: right; }
+.rp-toc-empty { font-size: 8.5pt; color: #94a3b8; font-style: italic; }

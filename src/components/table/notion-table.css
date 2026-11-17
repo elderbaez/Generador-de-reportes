@@ -1,0 +1,144 @@
+/* =====================================================================
+   Kit de tabla estilo Notion (prefijo nt-)
+   Regla: el modo edición NO cambia tamaños. Las filas miden lo mismo
+   editando que en la vista final; la edición solo agrega efectos visuales
+   superpuestos (hover, foco, herramientas de fila flotantes).
+   ===================================================================== */
+
+.nt-root { position: relative; }
+.nt-root * { box-sizing: border-box; }
+
+/* ---------- Contenedor y tabla (colores desde el tema del informe: --rp-*) ---------- */
+.nt-wrap { border: 1px solid var(--rp-border); border-radius: var(--rp-radius); background: #fff; overflow: visible; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.nt-tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 7.5pt; table-layout: fixed; }
+.nt-tbl thead th { background: var(--rp-th-bg); color: var(--rp-th-text); font-weight: 700; text-transform: uppercase; font-size: 6.5pt; letter-spacing: .05em; padding: 6px 8px; border-right: 1px solid var(--rp-border); border-bottom: 1px solid var(--rp-border); text-align: center; position: relative; }
+.nt-tbl thead th:last-child { border-right: 0; }
+.nt-tbl thead th.left { text-align: left; }
+.nt-tbl thead th.right { text-align: right; }
+.nt-tbl thead tr:first-child th:first-child { border-top-left-radius: var(--rp-radius-in); }
+.nt-tbl thead tr:first-child th:last-child { border-top-right-radius: var(--rp-radius-in); }
+.nt-tbl tbody tr:last-child td:first-child { border-bottom-left-radius: var(--rp-radius-in); }
+.nt-tbl tbody tr:last-child td:last-child { border-bottom-right-radius: var(--rp-radius-in); }
+.nt-tbl tbody td { padding: 4px 8px; border-right: 1px solid var(--rp-line); border-bottom: 1px solid var(--rp-line); vertical-align: middle; transition: background-color .12s; }
+.nt-tbl tbody tr:last-child td { border-bottom: 0; }
+.nt-tbl tbody td:last-child { border-right: 0; }
+/* Comportamiento (vale para cualquier tabla, tenga o no la estética nt-tbl) */
+table.nt-editing tbody tr:hover > td { background-color: rgba(241,245,249,.55); }
+table.nt-editing tbody tr.row-selected > td { background-color: rgba(224,242,254,.7) !important; }
+table.nt-editing tbody tr.row-selected:hover > td { background-color: rgba(224,242,254,.9) !important; }
+table.nt-editing tbody tr.drag-over > td { box-shadow: inset 0 2px 0 #0ea5e9; }
+/* Tablas con estética propia y bordes redondeados: dejan ver las herramientas de fila fuera del borde */
+.nt-visible { overflow: visible !important; }
+.nt-round thead tr:first-child > th:first-child { border-top-left-radius: var(--rp-radius-xs); }
+.nt-round thead tr:first-child > th:last-child { border-top-right-radius: var(--rp-radius-xs); }
+.nt-round tbody tr:last-child > td:first-child { border-bottom-left-radius: var(--rp-radius-xs); }
+.nt-round tbody tr:last-child > td:last-child { border-bottom-right-radius: var(--rp-radius-xs); }
+.nt-empty { padding: 16px; text-align: center; color: #94a3b8; font-style: italic; font-size: 7.5pt; }
+
+/* ---------- Columna N.º con selección y herramientas ---------- */
+.nt-cell-num { position: relative; text-align: center; font-weight: 700; color: #334155; user-select: none; }
+.nt-cell-num.editable { cursor: pointer; }
+.nt-num-inner { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.nt-chk { width: 12px; height: 12px; border-radius: 3px; border: 1px solid #cbd5e1; background: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color .12s, border-color .12s; }
+.nt-chk.on { background: #0b455b; border-color: #0b455b; color: #fff; }
+.nt-chk svg { width: 9px; height: 9px; }
+.nt-btn-all { width: 12px; height: 12px; border-radius: 3px; border: 1px solid #94a3b8; background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; transition: border-color .12s; }
+.nt-btn-all:hover { border-color: #475569; }
+.nt-btn-all svg { width: 9px; height: 9px; color: #0b455b; }
+
+.nt-row-tools { position: absolute; right: calc(100% - 6px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2px; opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 5; }
+table.nt-editing tbody tr:hover .nt-row-tools,
+table.nt-editing tbody tr:focus-within .nt-row-tools { opacity: 1; pointer-events: auto; }
+/* Celda que aloja el canal de herramientas sin columna N.º */
+.nt-gutter { position: relative; }
+.nt-edge-btn.drag.on { background: #0b455b; border-color: #0b455b; color: #fff; }
+.nt-edge-btn { width: 20px; height: 20px; border: 1px solid #dce3eb; border-radius: 5px; background: #fff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(15,23,42,.08); font-size: 11px; padding: 0; line-height: 1; cursor: pointer; transition: background-color .12s, border-color .12s; }
+.nt-edge-btn:hover { background: #f0f7ff; border-color: #93c5fd; color: #1d4ed8; }
+.nt-edge-btn.drag { cursor: grab; font-size: 12px; }
+.nt-edge-btn.drag:active { cursor: grabbing; }
+
+/* ---------- Celda editable (contentEditable) ---------- */
+.nt-cell { -webkit-user-select: text; user-select: text; line-height: 1.4; outline: none; padding: 2px 4px; margin: -2px -4px; border-radius: 4px; transition: background-color .12s, box-shadow .12s; overflow-wrap: anywhere; white-space: pre-wrap; }
+.nt-editing .nt-cell { cursor: text; }
+.nt-editing .nt-cell:hover { background: rgba(241,245,249,.7); }
+.nt-editing .nt-cell:focus { background: rgba(219,234,254,.35); box-shadow: inset 0 0 0 1px rgba(147,197,253,.6); text-overflow: clip; }
+.nt-cell:empty::before { content: '\200b'; }
+.nt-editing .nt-cell:empty:not(:focus)::before { content: attr(data-placeholder); color: #94a3b8; font-style: italic; pointer-events: none; }
+.nt-cell.nt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+.nt-cell.nt-inherit-lh { line-height: inherit; }
+.nt-cell.nt-nowrap { white-space: nowrap; overflow-wrap: normal; }
+.nt-cell[data-suffix]:not(:empty):not(:focus)::after { content: attr(data-suffix); margin-left: 1px; opacity: .65; }
+.nt-cell.has-suggest { position: relative; }
+.nt-cell.has-suggest::after { content: '▾'; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: #cbd5e1; font-size: 9px; pointer-events: none; opacity: 0; transition: opacity .12s; }
+.nt-editing .nt-cell.has-suggest:focus::after { opacity: 1; }
+
+/* ---------- Fichas (pills) con selector ---------- */
+.nt-pill-btn { all: unset; display: inline-flex; border-radius: 6px; cursor: pointer; }
+.nt-pill-btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+.nt-pill-btn:hover > * { filter: brightness(.96); }
+.nt-pill { display: inline-block; border: 1px solid; border-radius: 999px; padding: 1px 8px; font-size: 6.5pt; font-weight: 900; letter-spacing: .05em; white-space: nowrap; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+.nt-pill.status { border-radius: 4px; font-weight: 600; letter-spacing: 0; padding: 1px 6px; display: inline-flex; align-items: center; gap: 3px; }
+.nt-pill svg { width: 9px; height: 9px; flex-shrink: 0; stroke-width: 2.4; }
+.nt-pill.critico { background: #881337; color: #fff; border-color: #4c0519; }
+.nt-pill.alto { background: #dc2626; color: #fff; border-color: #991b1b; }
+.nt-pill.medio { background: #fbbf24; color: #0f172a; border-color: #f59e0b; }
+.nt-pill.bajo { background: #059669; color: #fff; border-color: #047857; }
+.nt-pill.analisis, .nt-pill.pendiente { background: #f1f5f9; color: #334155; border-color: #e2e8f0; }
+.nt-pill.ejecucion { background: #f0f9ff; color: #075985; border-color: #bae6fd; }
+.nt-pill.aguardando { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.nt-pill.resuelto { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+.nt-pill.vencido { background: #fff1f2; color: #9f1239; border-color: #fecdd3; font-weight: 600; }
+.nt-pill.observado { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+
+/* ---------- Menús flotantes (portal a body) ---------- */
+.nt-menu { position: fixed; z-index: 1300; min-width: 190px; padding: 6px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 10px 30px rgba(15,23,42,.15); font-family: inherit; }
+.nt-menu-caption { padding: 6px 8px; font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; }
+.nt-menu-caption-hint { font-weight: 600; color: #cbd5e1; letter-spacing: 0; text-transform: none; }
+.nt-menu-list { display: flex; flex-direction: column; gap: 1px; max-height: 220px; overflow: auto; }
+.nt-menu-opt { width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: transparent; border: 0; border-radius: 6px; cursor: pointer; text-align: left; transition: background-color .12s; font-size: 12px; color: #334155; font-family: inherit; }
+.nt-menu-opt:hover, .nt-menu-opt.active { background: #f1f5f9; }
+.nt-menu-opt.active { background: #e0f2fe; color: #075985; font-weight: 600; }
+.nt-menu-opt:focus { background: #e0f2fe; outline: none; }
+.nt-menu-opt svg { width: 12px; height: 12px; flex-shrink: 0; }
+.nt-menu-opt.danger { color: #b91c1c; }
+.nt-menu-opt-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nt-menu-opt-key { font-size: 9px; color: #94a3b8; border: 1px solid #e2e8f0; border-radius: 3px; padding: 0 4px; font-family: ui-monospace, monospace; font-weight: 600; }
+.nt-menu-check { margin-left: auto; color: #0284c7; width: 12px; height: 12px; flex-shrink: 0; }
+.nt-menu-sep { height: 1px; background: #e2e8f0; margin: 4px 2px; }
+
+/* ---------- Impresión ---------- */
+@media print {
+  .nt-root, .nt-root * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .nt-row-tools, .nt-chk, .nt-btn-all { display: none !important; }
+  .nt-wrap { box-shadow: none; }
+  .nt-tbl tbody tr { break-inside: avoid; }
+}
+
+/* ---------- Elementos editables fuera de tablas (campos, indicadores) ---------- */
+.nt-item { position: relative; border-radius: 6px; transition: background-color .12s, box-shadow .12s; }
+.nt-editing .nt-item:hover { background-color: rgba(241,245,249,.55); }
+.nt-editing .nt-item:hover > .nt-row-tools,
+.nt-editing .nt-item:focus-within > .nt-row-tools { opacity: 1; pointer-events: auto; }
+.nt-item > .nt-row-tools { right: auto; left: -24px; top: 50%; }
+.nt-item.nt-tools-top > .nt-row-tools { left: 2px; top: 2px; transform: none; flex-direction: row; }
+.nt-item.row-selected { background-color: rgba(224,242,254,.7) !important; }
+.nt-item.drag-over { box-shadow: inset 0 2px 0 #0ea5e9; }
+.nt-item.drag-over.nt-tools-top { box-shadow: inset 2px 0 0 #0ea5e9; }
+
+/* ---------- Ordenar por columna ---------- */
+.nt-sort { all: unset; position: absolute; inset: 0; display: flex; align-items: center; padding: inherit; cursor: pointer; text-align: inherit; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; border-radius: inherit; transition: background-color .12s; }
+.nt-tbl thead th.left .nt-sort { justify-content: flex-start; }
+.nt-tbl thead th:not(.left):not(.right) .nt-sort { justify-content: center; }
+.nt-sort:hover { background: rgba(15,23,42,.05); }
+.nt-sort:focus-visible { outline: 2px solid #3b82f6; outline-offset: -2px; }
+.nt-sort-ic { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; opacity: 0; transition: opacity .12s; }
+.nt-sort:hover .nt-sort-ic { opacity: .45; }
+.nt-sort.on .nt-sort-ic { opacity: 1; color: #0b455b; }
+/* El texto invisible del th mantiene el alto; el botón se superpone */
+.nt-sort-ghost { visibility: hidden; }
+
+/* ---------- Fichas que pueden partirse en 2 líneas si no entran en la columna ---------- */
+.nt-pill-btn { max-width: 100%; }
+.nt-pill-txt { min-width: 0; }
+.nt-pill.status.wrap { white-space: normal; text-align: left; line-height: 1.2; max-width: 100%; }
+.nt-pill.status.wrap svg { align-self: center; }

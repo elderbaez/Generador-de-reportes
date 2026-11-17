@@ -1,119 +1,193 @@
-import React from 'react';
-import { PendingItem, ImpactLevel } from '../../types';
+import React, { useMemo, useRef, useState } from 'react';
+import { Plus, Search, Clock, Loader, Hourglass, CheckCircle2, AlertCircle } from 'lucide-react';
+import { PendingItem, ImpactLevel, PendingStatus } from '../../types';
+import { SectionHeaderBanner } from '../SectionHeaderBanner';
+import { EditDock, DockButton } from '../EditDock';
+import {
+  EditableCell, SuggestCell, PillSelectCell, PillOption, StatusPill,
+  useRowOps, NumHeader, NumCell, RowMenuFor, BulkBar, TableHint, newRowId,
+  useColumnSort, SortHeader, dateSortValue,
+} from '@/src/components/table/NotionTable';
+
+const IMPACT: PillOption<ImpactLevel>[] = [
+  { value: 'CRÍTICO', label: 'CRÍTICO', cls: 'critico' },
+  { value: 'ALTO', label: 'ALTO', cls: 'alto' },
+  { value: 'MEDIO', label: 'MEDIO', cls: 'medio' },
+  { value: 'BAJO', label: 'BAJO', cls: 'bajo' },
+];
+
+const STATUS_DEF: [PendingStatus, string, React.ComponentType<{ className?: string }>][] = [
+  ['En análisis', 'analisis', Search],
+  ['Pendiente', 'pendiente', Clock],
+  ['En ejecución', 'ejecucion', Loader],
+  ['Aguardando respuesta', 'aguardando', Hourglass],
+  ['Resuelto', 'resuelto', CheckCircle2],
+  ['Vencido', 'vencido', AlertCircle],
+];
+const STATUS: PillOption<PendingStatus>[] = STATUS_DEF.map(([value, cls, icon]) => ({
+  value,
+  label: value,
+  // "wrap": si el texto no entra en la columna (ej. "Aguardando respuesta") pasa a 2 líneas
+  render: () => <StatusPill cls={`${cls} wrap`} icon={icon}>{value}</StatusPill>,
+  menu: () => <StatusPill cls={cls} icon={icon}>{value}</StatusPill>,
+}));
+
+type SortKey = 'description' | 'responsible' | 'deadline' | 'impact' | 'status';
+const IMPACT_RANK: Record<string, number> = { 'CRÍTICO': 0, 'ALTO': 1, 'MEDIO': 2, 'BAJO': 3 };
+const STATUS_RANK: Record<string, number> = Object.fromEntries(STATUS_DEF.map(([v], i) => [v, i]));
 
 interface PendingBoxBlockProps {
   pendings: PendingItem[];
+  title?: string;
+  numberIndex?: number | null;
+  showTitle?: boolean;
+  isEditing?: boolean;
+  onUpdateTitle?: (title: string) => void;
+  onToggleShowTitle?: () => void;
+  onUpdatePendings?: (pendings: PendingItem[]) => void;
+  onStartEditing?: () => void;
 }
 
-export const PendingBoxBlock: React.FC<PendingBoxBlockProps> = ({ pendings }) => {
-  const getImpactBadge = (impact: ImpactLevel) => {
-    switch (impact) {
-      case 'CRÍTICO':
-        return 'bg-rose-900 text-white border-rose-950';
-      case 'ALTO':
-        return 'bg-red-600 text-white border-red-700';
-      case 'MEDIO':
-        return 'bg-amber-400 text-slate-900 border-amber-500 font-bold';
-      case 'BAJO':
-        return 'bg-emerald-600 text-white border-emerald-700';
-      default:
-        return 'bg-slate-200 text-slate-700 border-slate-300';
-    }
-  };
+export const PendingBoxBlock: React.FC<PendingBoxBlockProps> = ({
+  pendings,
+  title = 'PENDENCIAS Y SITUACIONES RELEVANTES',
+  numberIndex,
+  showTitle = true,
+  isEditing = false,
+  onUpdateTitle,
+  onToggleShowTitle,
+  onUpdatePendings,
+  onStartEditing,
+}) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [menu, setMenu] = useState<{ rowId: string; index: number; rect: DOMRect } | null>(null);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Resuelto':
-        return 'bg-emerald-50 text-emerald-800 border-emerald-200';
-      case 'Vencido':
-        return 'bg-rose-50 text-rose-800 border-rose-200 font-semibold';
-      case 'En ejecución':
-        return 'bg-sky-50 text-sky-800 border-sky-200';
-      case 'Aguardando respuesta':
-        return 'bg-amber-50 text-amber-800 border-amber-200';
-      default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-  };
+  const update = (rows: PendingItem[]) => onUpdatePendings?.(rows);
+
+  const ops = useRowOps<PendingItem>({
+    rows: pendings,
+    onChange: update,
+    isEditing,
+    idPrefix: 'pending',
+    rootRef,
+    createRow: () => ({
+      id: newRowId('pending'),
+      description: '',
+      responsible: '',
+      deadline: '',
+      impact: 'MEDIO',
+      status: 'Pendiente',
+    }),
+  });
+
+  // Ordenar por columna: clic en el título (impacto va de crítico a bajo; estado, en el orden del flujo)
+  const { sortKey, sortDir, sortBy } = useColumnSort<PendingItem, SortKey>({
+    rows: pendings,
+    onChange: update,
+    getValue: (p, key) => {
+      switch (key) {
+        case 'deadline': return dateSortValue(p.deadline);
+        case 'impact': return IMPACT_RANK[p.impact] ?? 9;
+        case 'status': return STATUS_RANK[p.status] ?? 99;
+        default: return (p[key] || '').trim();
+      }
+    },
+  });
+  const sh = (key: SortKey, label: string) => (
+    <SortHeader label={label} isEditing={isEditing} dir={sortKey === key ? sortDir : null} onSort={() => sortBy(key)} />
+  );
+
+  const responsibles = useMemo(() => pendings.map((p) => p.responsible || ''), [pendings]);
+  const change = (id: string, patch: Partial<PendingItem>) =>
+    update(pendings.map((p) => (p.id === id ? { ...p, ...patch } : p)));
 
   return (
-    <section className="px-5 py-2 shrink-0 select-none">
-      {/* Section Title */}
-      <div className="w-full text-center font-bold text-[9pt] text-[#174b60] tracking-wider uppercase py-1 px-4 bg-gradient-to-r from-slate-100 via-sky-50 to-slate-100 border border-[#b8cbd4] rounded-lg mb-2 shadow-2xs">
-        PENDENCIAS Y SITUACIONES RELEVANTES
-      </div>
+    <section ref={rootRef} className="nt-root px-5 py-2 shrink-0">
+      <SectionHeaderBanner
+        numberIndex={numberIndex}
+        title={title}
+        isEditing={isEditing}
+        showTitle={showTitle}
+        onUpdateTitle={onUpdateTitle}
+        onToggleShowTitle={onToggleShowTitle}
+        onStartEditing={onStartEditing}
+      />
 
-      {/* Cuadro integrado con esquinas redondeadas (Solid rounded box table container) */}
-      <div className="rounded-xl border border-slate-300 bg-white overflow-hidden shadow-xs">
-        <table className="w-full border-collapse text-[7.5pt] table-fixed">
+      {isEditing && (
+        <>
+          <EditDock slot="options">
+            <DockButton variant="primary" onClick={() => ops.addRow(pendings.length - 1)}>
+              <Plus /> Agregar pendencia
+            </DockButton>
+          </EditDock>
+          <TableHint sortable />
+          <BulkBar ops={ops} />
+        </>
+      )}
+
+      <div
+        className="nt-wrap rp-table"
+        onClick={() => { if (!isEditing) onStartEditing?.(); }}
+        style={!isEditing && onStartEditing ? { cursor: 'pointer' } : undefined}
+      >
+        <table className={`nt-tbl${isEditing ? ' nt-editing' : ''}`}>
+          <colgroup>
+            <col style={{ width: '7%' }} />
+            <col style={{ width: '37%' }} />
+            <col style={{ width: '17%' }} />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '17%' }} />
+          </colgroup>
           <thead>
-            <tr className="bg-[#e9edf4] text-[#1f3a52] font-bold border-b border-slate-300 uppercase text-[7pt] tracking-wider">
-              <th className="py-2 px-2 text-center w-[6%] border-r border-slate-300">N.º</th>
-              <th className="py-2 px-3 text-left w-[42%] border-r border-slate-300">
-                Descripción de la Situación / Pendencia
-              </th>
-              <th className="py-2 px-2.5 text-left w-[17%] border-r border-slate-300">
-                Responsable
-              </th>
-              <th className="py-2 px-2 text-center w-[11%] border-r border-slate-300">Plazo</th>
-              <th className="py-2 px-2 text-center w-[11%] border-r border-slate-300">Impacto</th>
-              <th className="py-2 px-2 text-center w-[13%]">Estado</th>
+            <tr>
+              <th><NumHeader ops={ops} isEditing={isEditing} count={pendings.length} /></th>
+              <th className="left">{sh('description', 'Descripción de la Situación / Pendencia')}</th>
+              <th className="left">{sh('responsible', 'Responsable')}</th>
+              <th>{sh('deadline', 'Plazo')}</th>
+              <th>{sh('impact', 'Impacto')}</th>
+              <th>{sh('status', 'Estado')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody>
             {pendings.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="py-5 text-center text-slate-400 italic text-[8pt] bg-slate-50/50"
-                >
-                  No hay pendencias ni situaciones críticas registradas en esta semana.
+              <tr><td colSpan={6} className="nt-empty">No hay pendencias registradas.</td></tr>
+            ) : pendings.map((p, idx) => (
+              <tr
+                key={p.id}
+                className={`${ops.selected.has(p.id) ? 'row-selected ' : ''}${ops.dragOverId === p.id ? 'drag-over' : ''}`}
+                {...ops.dragProps(p.id)}
+              >
+                <NumCell ops={ops} id={p.id} index={idx} isEditing={isEditing}
+                  onOpenMenu={(rect) => setMenu({ rowId: p.id, index: idx, rect })} />
+                <td>
+                  <EditableCell value={p.description} row={idx} col={0} isEditing={isEditing} multiline
+                    placeholder="Describir la pendencia…" onCommit={(v) => change(p.id, { description: v })} />
+                </td>
+                <td style={{ color: '#334155', fontWeight: 500 }}>
+                  <SuggestCell value={p.responsible} row={idx} col={1} isEditing={isEditing}
+                    suggestions={responsibles} caption="Responsables"
+                    onCommit={(v) => change(p.id, { responsible: v })} />
+                </td>
+                <td style={{ textAlign: 'center', fontFamily: 'var(--rp-font-num)', color: '#475569' }}>
+                  <EditableCell value={p.deadline} row={idx} col={2} isEditing={isEditing}
+                    placeholder="dd/mm/aaaa" onCommit={(v) => change(p.id, { deadline: v })} />
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <PillSelectCell value={p.impact} options={IMPACT} isEditing={isEditing} row={idx} col={3}
+                    caption="Impacto" onChange={(v) => change(p.id, { impact: v })} />
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <PillSelectCell value={p.status} options={STATUS} isEditing={isEditing} row={idx} col={4}
+                    caption="Estado" onChange={(v) => change(p.id, { status: v })} />
                 </td>
               </tr>
-            ) : (
-              pendings.map((p, idx) => (
-                <tr
-                  key={p.id || idx}
-                  className={`transition-colors hover:bg-slate-50/80 ${
-                    idx % 2 === 1 ? 'bg-slate-50/40' : 'bg-white'
-                  }`}
-                >
-                  <td className="py-2 px-2 text-center font-bold text-slate-700 border-r border-slate-200">
-                    {idx + 1}
-                  </td>
-                  <td className="py-2 px-3 text-slate-800 leading-snug border-r border-slate-200">
-                    {p.description || '—'}
-                  </td>
-                  <td className="py-2 px-2.5 text-slate-700 font-medium truncate border-r border-slate-200">
-                    {p.responsible || '—'}
-                  </td>
-                  <td className="py-2 px-2 text-center font-mono text-[7pt] text-slate-600 border-r border-slate-200">
-                    {p.deadline || '—'}
-                  </td>
-                  <td className="py-2 px-2 text-center border-r border-slate-200">
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded-full text-[6.5pt] font-black tracking-wide border shadow-2xs ${getImpactBadge(
-                        p.impact
-                      )}`}
-                    >
-                      {p.impact}
-                    </span>
-                  </td>
-                  <td className="py-2 px-2 text-center">
-                    <span
-                      className={`inline-block px-1.5 py-0.5 rounded text-[6.5pt] border ${getStatusBadge(
-                        p.status
-                      )}`}
-                    >
-                      {p.status}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
+
+      <RowMenuFor ops={ops} menu={menu} onClose={() => setMenu(null)} noun="pendencia" />
     </section>
   );
 };

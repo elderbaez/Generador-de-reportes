@@ -1,0 +1,241 @@
+/* =====================================================================
+   Texto con formato (Markdown de los LLM). Ver RichText.tsx.
+   Colores y letras salen del tema (--rp-primary, --rp-label, --rp-th-bg…).
+   ===================================================================== */
+
+.rp-md { overflow-wrap: break-word; }
+.rp-md > :first-child { margin-top: 0; }
+.rp-md > :last-child { margin-bottom: 0; }
+
+.rp-md-p, .rp-md p { margin: 0 0 .55em; white-space: pre-line; }
+
+/* Títulos: # ## ### */
+.rp-md-h, .rp-md h1, .rp-md h2, .rp-md h3, .rp-md h4, .rp-md h5, .rp-md h6 {
+  margin: .9em 0 .35em;
+  font-family: var(--rp-font-title, inherit);
+  line-height: 1.25;
+  color: var(--rp-primary, #0b455b);
+  text-align: left;
+}
+.rp-md-h1, .rp-md h1, .rp-md h2, .rp-md h3 { font-size: 1.375em; font-weight: 800; }
+.rp-md-h2, .rp-md h4 { font-size: 1.19em; font-weight: 700; }
+.rp-md-h3, .rp-md h5, .rp-md h6 {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--rp-label, #1f4e66);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* En el renglón */
+.rp-md-strong, .rp-md b, .rp-md strong { font-weight: 700; color: inherit; }
+.rp-md-em, .rp-md i, .rp-md em { font-style: italic; }
+.rp-md-u, .rp-md u { text-decoration: underline; text-underline-offset: 2px; }
+.rp-md-s, .rp-md s, .rp-md strike, .rp-md del { text-decoration: line-through; opacity: .75; }
+.rp-md-mark, .rp-md mark {
+  background: #fde68a;
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp-md-sub, .rp-md-sup { font-size: .75em; line-height: 0; }
+.rp-md-code, .rp-md :not(pre) > code {
+  font-family: var(--rp-font-num, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: .92em;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  padding: 0 3px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp-md-link { color: var(--rp-primary, #0b455b); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Listas (Tailwind les quita las viñetas: se devuelven acá) */
+.rp-md ul, .rp-md ol { margin: 0 0 .55em; padding-left: 1.5em; text-align: left; }
+.rp-md ul { list-style: disc; }
+.rp-md ul ul { list-style: circle; }
+.rp-md ul ul ul { list-style: square; }
+.rp-md ol { list-style: decimal; }
+.rp-md ol ol { list-style: lower-alpha; }
+.rp-md li { margin: .12em 0; }
+.rp-md li::marker { color: var(--rp-primary, #0b455b); font-weight: 700; }
+.rp-md li > p { margin: 0; }
+.rp-md li > ul, .rp-md li > ol, .rp-md ul > ul, .rp-md ol > ol, .rp-md ul > ol, .rp-md ol > ul { margin: .12em 0 0; }
+
+/* Tareas: - [ ] / - [x] */
+.rp-md-task { list-style: none; position: relative; }
+.rp-md-check {
+  position: absolute;
+  left: -1.35em;
+  top: .2em;
+  width: .95em;
+  height: .95em;
+  border: 1.5px solid var(--rp-primary, #0b455b);
+  border-radius: 2px;
+  font-size: .8em;
+  line-height: .85em;
+  text-align: center;
+  font-weight: 800;
+  color: #fff;
+}
+.rp-md-task.is-done .rp-md-check {
+  background: var(--rp-primary, #0b455b);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp-md-task.is-done > .rp-md-p { color: #64748b; }
+
+/* Cita: > */
+.rp-md-quote, .rp-md blockquote {
+  margin: 0 0 .55em;
+  padding: .2em 0 .2em .9em;
+  border-left: 3px solid var(--rp-primary, #0b455b);
+  color: #475569;
+  font-style: italic;
+}
+
+/* Bloque de código: ``` */
+.rp-md-pre, .rp-md pre {
+  margin: 0 0 .55em;
+  padding: 5px 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--rp-radius-sm, 4px);
+  font-family: var(--rp-font-num, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: .92em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  text-align: left;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.rp-md-hr, .rp-md hr { border: 0; border-top: 1px solid var(--rp-line, #e2e8f0); margin: .8em 0; }
+
+/* Tablas: | a | b | — usan la estética común nt-wrap / nt-tbl (notion-table.css),
+   así toman los colores y bordes del tema como las de los demás módulos */
+.rp-md-table-wrap { margin: 0 0 .65em; }
+.rp-md .nt-tbl { table-layout: auto; text-align: left; line-height: 1.4; }
+.rp-md .nt-tbl tbody td { vertical-align: top; font-size: 7.5pt; }
+.rp-md .nt-tbl tbody tr:last-child td { border-bottom: 0; }
+/* Tablas que llegan sin esa estética (por ejemplo, recién pegadas) */
+.rp-md table:not(.nt-tbl) { width: 100%; border-collapse: collapse; text-align: left; line-height: 1.4; }
+.rp-md table:not(.nt-tbl) th, .rp-md table:not(.nt-tbl) td { border: 1px solid var(--rp-line, #e2e8f0); padding: 3px 6px; vertical-align: top; }
+.rp-md table:not(.nt-tbl) th { background: var(--rp-th-bg, #f1f5f9); color: var(--rp-th-text, #1f4e66); font-weight: 700; }
+
+/* Texto por trozos (bloques que se reparten entre hojas): el espacio entre
+   trozos lo pone cada trozo según su tipo, en mm FIJOS (los mismos que usa el
+   paginador, ver utils/mdChunks CHUNK_GAP_MM), así no cambia con el tamaño de letra */
+.rp-md-chunk.is-block { margin-top: 1.55mm; }
+.rp-md-chunk.is-heading { margin-top: 3.1mm; }
+
+/* Letra del módulo de Texto: la elige el tema (--rp-text-size) o cada bloque */
+.rp-text-body { font-size: var(--rp-text-size, 10pt); }
+.rp-md-chunks > .rp-md-chunk:first-child { margin-top: 0; }
+
+/* =====================================================================
+   Editor visual (contentEditable): se ve igual que el texto impreso
+   ===================================================================== */
+.rp-md-editor {
+  outline: 1px dashed color-mix(in srgb, var(--rp-primary, #0b455b) 35%, transparent);
+  outline-offset: 4px;
+  border-radius: 2px;
+  min-height: 1.7em;
+  cursor: text;
+  caret-color: var(--rp-primary, #0b455b);
+}
+.rp-md-editor:focus { outline: 1.5px solid color-mix(in srgb, var(--rp-primary, #0b455b) 55%, transparent); }
+.rp-md-editor.is-empty::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  color: #94a3b8;
+  font-style: italic;
+  pointer-events: none;
+}
+.rp-md-editor [data-md-raw] { cursor: pointer; border-radius: 3px; }
+.rp-md-editor [data-md-raw]:hover { background: color-mix(in srgb, var(--rp-primary, #0b455b) 10%, transparent); }
+.rp-md-editor .rp-md-check { cursor: pointer; }
+.rp-md-editor th, .rp-md-editor td { min-width: 3em; }
+
+/* Vista de código (usuarios avanzados) */
+.rp-md-source {
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 8pt;
+  line-height: 1.55;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px 8px;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+}
+.rp-md-source:focus { border-color: var(--rp-primary, #0b455b); background: #fff; }
+
+/* Fórmula en edición (ventanita) */
+.rp-math-pop {
+  position: absolute;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  min-width: 260px;
+}
+.rp-math-pop input[type='text'] {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 5px;
+  border: 0;
+  font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+}
+
+/* =====================================================================
+   Barra de formato (solo al editar, no se imprime)
+   ===================================================================== */
+.rp-fmt-bar { display: inline-flex; flex-wrap: wrap; }
+.rp-fmt-bar .ui-tb { font-weight: 700; }
+
+/* Rótulo de tabla numerado ("Tabla: …" antes de la tabla → "Tabla 2. …") */
+.rp-md-table-caption { margin: .2em 0 .35em; font-size: .92em; font-weight: 600; color: var(--rp-label, #1f4e66); text-align: left; }
+.rp-md-table-num { font-weight: 800; color: var(--rp-primary, #0b455b); }
+
+/* Diagramas Mermaid (```mermaid): centrados, nunca más anchos que la hoja */
+.rp-mermaid { margin: .3em 0 .7em; display: flex; justify-content: center; break-inside: avoid; }
+.rp-mermaid > svg { max-width: 100%; height: auto; }
+.rp-mermaid.is-src { display: block; }
+.rp-mermaid-error { font-size: 8pt; color: #b91c1c; margin-top: -.3em; }
+/* Diagramas: esquinas de los cuadros con el redondeo del tema */
+.rp-mermaid .node rect, .rp-mermaid rect.task, .rp-mermaid rect.actor, .rp-mermaid .cluster rect { rx: min(var(--rp-radius, 6px), 8px); ry: min(var(--rp-radius, 6px), 8px); }
+
+/* Referencias ("Foto 03") en el editor: una pieza que no se edita letra por letra */
+.rp-ref-chip { display: inline-block; padding: 0 4px; margin: 0 1px; border-radius: 4px; background: color-mix(in srgb, var(--rp-primary, #0b455b) 12%, transparent); color: var(--rp-primary, #0b455b); font-weight: 700; font-size: .95em; white-space: nowrap; cursor: default; }
+.rp-ref-pop { max-height: 320px; overflow: auto; min-width: 260px; max-width: 360px; }
+.rp-ref-group + .rp-ref-group { margin-top: 4px; }
+.rp-ref-item { display: flex; gap: 8px; align-items: baseline; width: 100%; text-align: left; border: 0; background: transparent; padding: 4px 8px; border-radius: 6px; cursor: pointer; font: inherit; font-size: 11.5px; color: #334155; }
+.rp-ref-item:hover { background: #f0f7f9; }
+.rp-ref-item b { flex-shrink: 0; color: #0b455b; }
+.rp-ref-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .85; }
+.rp-ref-empty { padding: 6px 8px; font-size: 11px; color: #64748b; max-width: 260px; }
+
+/* Campos del informe en el editor ({fecha}, {vertice}…): se ve el valor, se guarda la clave */
+.rp-var-chip { display: inline-block; padding: 0 4px; margin: 0 1px; border-radius: 4px; background: color-mix(in srgb, var(--rp-accent, #f4c84a) 28%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--rp-primary, #0b455b) 55%, transparent); color: inherit; font-weight: 600; white-space: nowrap; cursor: default; }
+.rp-ref-item.is-active { background: #e2eff3; }
+.rp-mention-var { color: #92400e !important; }
+
+/* Filas alternadas y tabla sin encabezado (en la hoja y en el editor) */
+.rp-md-table.rp-md-alt tbody tr:nth-child(even) > td { background: color-mix(in srgb, var(--rp-primary, #0b455b) 6%, transparent); }
+.rp-md-table.is-nohead tbody tr:first-child > td { border-top: 1px solid var(--rp-line, #e2e8f0); }
+.rp-md-table td[rowspan], .rp-md-table th[rowspan], .rp-md-table.nt-tbl td[rowspan], .rp-md-table.nt-tbl th[rowspan] { vertical-align: middle !important; }

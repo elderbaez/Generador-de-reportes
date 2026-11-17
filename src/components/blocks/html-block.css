@@ -1,0 +1,51 @@
+/* Módulo HTML / SVG (HtmlBlock) */
+.rp-html { overflow: hidden; max-width: 100%; }
+.rp-html svg, .rp-html img { max-width: 100%; height: auto; }
+.rp-html-empty {
+  display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8mm; border: 1.5px dashed #cbd5e1;
+  border-radius: 8px; color: #94a3b8; font-size: 9pt; font-weight: 600; cursor: pointer;
+}
+.rp-html-empty svg { width: 16px; height: 16px; }
+.rp-html-editor { margin-bottom: 3mm; display: flex; flex-direction: column; gap: 4px; }
+.rp-html-help { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 10px; color: #64748b; }
+.rp-html-help svg { width: 13px; height: 13px; color: #059669; }
+.rp-html-help code { background: #f1f5f9; padding: 0 3px; border-radius: 3px; }
+.rp-html-help button { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 1px 8px; font-size: 10px; font-weight: 700; color: #0b455b; cursor: pointer; }
+.rp-html-warn { font-size: 10px; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 3px 8px; }
+.rp-html-caption { margin-top: 1.5mm; padding: 1mm 2mm; font-size: 7.5pt; text-align: center; color: #334155; border-top: 1px solid var(--rp-line, #e2e8f0); }
+.rp-html-label { color: var(--rp-primary, #0b455b); }
+.rp-html-caption .rp-html-capcell { display: inline; }
+.rp-html-caption .rp-html-capcell[contenteditable="true"] { display: inline-block; min-width: 50mm; text-align: left; }
+.rp-html-ai { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 10px; color: #475569; background: #f0f7f9; border: 1px solid #cfe1e8; border-radius: 8px; padding: 5px 8px; }
+.rp-html-ai > svg { width: 14px; height: 14px; color: #0b455b; flex-shrink: 0; }
+.rp-html-ai span { flex: 1; min-width: 160px; }
+.rp-html-ai button { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700; color: #0b455b; cursor: pointer; }
+.rp-html-ai button svg { width: 12px; height: 12px; }
+
+/* Código: cerrado muestra un par de renglones */
+.rp-html-codebar { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #475569; }
+.rp-html-codebar > svg { width: 13px; height: 13px; color: #0b455b; }
+.rp-html-codebar span { color: #94a3b8; }
+.rp-html-codebar button { margin-left: auto; display: inline-flex; align-items: center; gap: 3px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 1px 8px; font-size: 10px; font-weight: 700; color: #0b455b; cursor: pointer; }
+.rp-html-codebar button svg { width: 12px; height: 12px; }
+.rp-html-code:not(.is-open) { overflow: hidden; resize: none; opacity: .75; mask-image: linear-gradient(#000 55%, transparent); -webkit-mask-image: linear-gradient(#000 55%, transparent); cursor: pointer; }
+
+/* Tabla de datos del bloque */
+.rp-html-data { border: 1px solid #cfe1e8; background: #f8fbfc; border-radius: 8px; padding: 6px 8px; }
+.rp-html-data-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 10.5px; color: #0b455b; margin-bottom: 5px; }
+.rp-html-data-head svg { width: 13px; height: 13px; }
+.rp-html-data-head span { color: #64748b; font-size: 10px; }
+.rp-html-data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 10px; }
+.rp-html-data-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.rp-html-data-lbl { flex: 0 0 auto; max-width: 48%; font-size: 10.5px; font-weight: 700; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rp-html-data-row input { flex: 1; min-width: 0; border: 1px solid #cbd5e1; border-radius: 5px; padding: 2px 6px; font-size: 11px; background: #fff; font-variant-numeric: tabular-nums; }
+.rp-html-data-row input:focus { outline: 2px solid rgba(11,69,91,.25); border-color: #0b455b; }
+.rp-html-data-row.is-missing .rp-html-data-lbl { font-family: ui-monospace, monospace; color: #b45309; font-weight: 600; }
+.rp-html-data-row button { display: inline-flex; align-items: center; gap: 3px; border: 1px dashed #f59e0b; background: #fffbeb; color: #92400e; border-radius: 5px; padding: 1px 7px; font-size: 10px; font-weight: 700; cursor: pointer; }
+.rp-html-data-row button svg { width: 11px; height: 11px; }
+
+/* Datos editables en la hoja (solo editando el bloque) */
+.rp-html.is-data-editing .rp-hf { outline: 1px dashed color-mix(in srgb, var(--rp-primary, #0b455b) 55%, transparent); outline-offset: 1px; border-radius: 2px; cursor: text; background: color-mix(in srgb, var(--rp-accent, #f4c84a) 22%, transparent); }
+.rp-html.is-data-editing .rp-hf:empty { display: inline-block; min-width: 12mm; min-height: 1em; vertical-align: middle; }
+.rp-html.is-data-editing .rp-hf:hover { outline-style: solid; }
+.rp-html.is-data-editing .rp-hf[contenteditable="true"] { outline: 2px solid var(--rp-primary, #0b455b); background: #fff; color: #000; }

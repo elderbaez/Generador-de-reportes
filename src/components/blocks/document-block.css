@@ -1,0 +1,251 @@
+/* ============================================================
+   Bloque de documentos y planos (DocumentBlock)
+   ============================================================ */
+
+/* ----- Contenedor de filas ----- */
+.rp-doc-root {
+  position: relative;
+}
+
+.rp-doc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* el gap real lo calcula layoutDocRows en px */
+}
+
+.rp-doc-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0; /* gap real también en px inline */
+  justify-content: center;
+}
+
+/* ----- Figura (fragmento / hoja completa) ----- */
+figure.rp-doc-item {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Envoltura del papel: aquí va la sombra, para que rodee el clip */
+.rp-doc-paper {
+  position: relative;
+  flex: 1;
+  overflow: visible; /* la sombra se ve fuera */
+}
+
+
+/* Sombra: capa hermana detrás del plano (ver DocumentBlock). NO usar
+   filter: drop-shadow en .rp-doc-paper: Chrome imprimiría el plano como imagen.
+   El blur va en el envoltorio y el clip-path en el hijo, así la sombra sigue el
+   borde rasgado y se difumina hacia afuera en vez de quedar cortada. */
+.rp-doc-shadow {
+  position: absolute;
+  inset: 0;
+  transform: translateY(2.5px);
+  filter: blur(4.5px);
+  pointer-events: none;
+}
+
+.rp-doc-shadow > div {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, .34);
+}
+
+/* Borde hairline cuando no hay sombra ni recorte */
+.rp-doc-paper.has-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(15, 23, 42, .18);
+  pointer-events: none;
+}
+
+/* Zona recortada: aquí se aplica clip-path */
+.rp-doc-clip {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Imagen del fragmento */
+.rp-doc-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* ----- Estados de carga ----- */
+.rp-doc-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f8fafc;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.rp-doc-ph svg {
+  width: 26px;
+  height: 26px;
+  opacity: .6;
+}
+
+.rp-doc-ph.err { color: #ef4444; }
+.rp-doc-ph.err svg { opacity: 1; }
+
+.rp-doc-spin {
+  width: 20px;
+  height: 20px;
+  animation: rp-spin 0.85s linear infinite;
+  color: #64748b;
+}
+
+@keyframes rp-spin { to { transform: rotate(360deg); } }
+
+/* ----- Pie de fragmento (caption) -----
+   Texto de 7.5 pt en peso medio con el rótulo en negrita del color del tema,
+   sin recuadro. Los temas lo alcanzan con .rp-caption. */
+figcaption.rp-doc-caption {
+  margin-top: 3px;
+  min-height: 5.5mm;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Sin recuadro: texto suelto debajo del documento, como los pies de mapa */
+  background: none;
+  border: 0;
+  font-size: 7.5pt;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  color: #334155;
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.rp-doc-label {
+  font-weight: 700;
+  color: var(--rp-primary);
+  white-space: nowrap;
+}
+
+/* Celda editable del pie */
+.rp-doc-capcell {
+  display: inline;
+  min-width: 20px;
+  outline: none;
+}
+
+/* ----- Barra del fragmento -----
+   El aspecto viene del kit (.ui-glass + .ui-tb, ver ui-kit.css); acá solo la
+   posición y que aparezca al pasar el mouse. No agregar estilos a los botones
+   acá: este archivo no está en una capa y pisaría al kit. */
+.rp-doc-tools {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity .15s;
+  pointer-events: none;
+}
+
+figure.rp-doc-item:hover .rp-doc-tools,
+figure.rp-doc-item:focus-within .rp-doc-tools,
+.rp-doc-tools.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Miniatura del tipo de borde dentro del menú */
+.rp-doc-edgeic { flex-shrink: 0; width: 18px; height: 10px; display: block; }
+
+/* ----- Estado vacío del bloque ----- */
+.rp-doc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 64px;
+  border: 2px dashed rgba(15, 23, 42, .18);
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 6px 0;
+  transition: border-color .15s, background .15s;
+  user-select: none;
+}
+
+.rp-doc-empty:hover {
+  border-color: rgba(11, 69, 91, .4);
+  background: rgba(11, 69, 91, .03);
+  color: #0b455b;
+}
+
+.rp-doc-empty svg {
+  width: 24px;
+  height: 24px;
+  opacity: .5;
+}
+
+/* Resaltado drag-over */
+.rp-doc-root.drop-over .rp-doc-empty,
+.rp-doc-root.drop-over .rp-doc-rows {
+  outline: 2px dashed #0b455b;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ----- Overlay de anotaciones vectoriales ----- */
+/* ---------- Anotaciones sobre el fragmento ----------
+   El overlay ES el <svg>, y su posición y tamaño los fija el componente en
+   línea: puede ser MÁS GRANDE que el papel, porque los callouts de lupa se
+   salen y el bloque les reserva margen (docOutset). De ahí overflow visible y
+   que no se use inset: nada de recortar acá. */
+.rp-doc-annotation-overlay {
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* Indicador en la barra: el fragmento salió vectorial o como imagen */
+.rp-doc-kind {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 5px;
+  margin: 0 2px;
+  border-radius: 4px;
+  font: 800 9px/1 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: .06em;
+  cursor: default;
+}
+
+.rp-doc-kind.vec { background: rgba(16, 185, 129, .22); color: #6ee7b7; }
+.rp-doc-kind.img { background: rgba(245, 158, 11, .22); color: #fcd34d; }
+.rp-doc-kind.pending { background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .55); }

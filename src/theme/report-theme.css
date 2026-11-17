@@ -1,0 +1,140 @@
+/* =====================================================================
+   Tema del informe — variables de aspecto (prefijo --rp-)
+   ---------------------------------------------------------------------
+   Solo afectan a la HOJA del informe (lo que se imprime). El editor
+   (panel lateral, barra superior, panel flotante) no las usa.
+   Estos son los valores de fábrica ("Institucional"); el menú de Temas
+   los reemplaza escribiendo un :root con los valores elegidos.
+   ===================================================================== */
+
+:root {
+  /* Color principal (barras de título, encabezado, etiquetas, números destacados) */
+  --rp-primary: #0b455b;
+  --rp-primary-dark: #072f3e;
+  --rp-primary-soft: #e6eef2;
+  --rp-label: #1f4e66;
+
+  /* Acento (título del encabezado, detalles) */
+  --rp-accent: #f4c84a;
+
+  /* Barras de título de sección */
+  --rp-title-text: #174b60;
+  --rp-title-border: #b8cbd4;
+  --rp-title-bg: linear-gradient(to right in oklab, oklch(96.8% 0.007 247.896), oklch(97.7% 0.013 236.62), oklch(96.8% 0.007 247.896));
+
+  /* Indicadores (plazo, financiero, físico) y curva real */
+  --rp-ind-1: #1f6487;
+  --rp-ind-2: #c99326;
+  --rp-ind-3: #659d43;
+  --rp-real: #059669;
+
+  /* Gráfico de avance por rubro: barras de tarea principal y de subtarea */
+  --rp-bar-main: #0b455b;
+  --rp-bar-sub: #1f6487;
+
+  /* Tablas */
+  --rp-th-bg: #e9edf4;
+  --rp-th-text: #1f3a52;
+  --rp-border: #cbd5e1;
+
+  /* Fondos suaves y líneas: el tono gris azulado de filas, pies de foto,
+     observaciones, pistas de barras y separadores */
+  --rp-surface-1: oklch(98.4% 0.003 247.858);
+  --rp-surface-2: oklch(96.8% 0.007 247.896);
+  --rp-line: oklch(92.9% 0.013 255.508);
+
+  /* Recuadro destacado (ej. Medición acumulada) */
+  --rp-highlight-bg: #f0f7f9;
+  --rp-highlight-border: #d6e4ea;
+
+  /* Forma: redondeo de esquinas (tablas, tarjetas, barras de título) */
+  --rp-radius: 10px;
+
+  /* Texto general */
+  --rp-text: #172033;
+
+  /* Fuentes */
+  --rp-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --rp-font-title: var(--rp-font-body);
+  --rp-font-num: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+/* ---------- Aplicación sobre la hoja ---------- */
+.a4-sheet {
+  color: var(--rp-text);
+  font-family: var(--rp-font-body);
+  /* Los grises claros de Tailwind (bg-slate-50, border-slate-200…) dentro de la hoja siguen al tema */
+  --color-slate-50: var(--rp-surface-1);
+  --color-slate-100: var(--rp-surface-2);
+  --color-slate-200: var(--rp-line);
+  --color-slate-300: var(--rp-border);
+  /* Redondeos derivados: se calculan en la hoja, así siguen al --rp-radius que ponga
+     el panel o una regla propia (:scope { --rp-radius: 4px }) */
+  --rp-radius-in: max(0px, calc(var(--rp-radius) - 1px));
+  --rp-radius-sm: max(0px, calc(var(--rp-radius) - 2px));
+  --rp-radius-xs: max(0px, calc(var(--rp-radius) - 3px));
+  --rp-radius-lg: calc(var(--rp-radius) + 2px);
+}
+/* Fuera de edición, cada tabla recorta su contenido a la curva del borde: el relleno de la
+   cabecera y de las filas nunca se sale de la esquina, sea cual sea el grosor o el radio
+   del borde. (Editando se deja visible para que se vean las herramientas de fila.) */
+.a4-sheet .rp-table:not(:has(.nt-editing)) { overflow: hidden !important; }
+.a4-sheet .font-mono { font-family: var(--rp-font-num); }
+
+/* Elementos comunes con nombre estable (los usa el apartado Avanzado) */
+.rp-title { font-family: var(--rp-font-title); background: var(--rp-title-bg); }
+.rp-num { font-family: var(--rp-font-num); }
+
+/* Clases universales para todos los gráficos (barras métricas, curva S, rubros, anillos y Gantt):
+   permiten que una regla de riel (.rp-track) o de relleno (.rp-bar-fill) estilice TODO sin distinción. */
+:root {
+  --rp-track-bg: var(--rp-surface-2);
+}
+
+/* :where() = sin peso: estas reglas son el piso común y nunca le ganan al CSS propio de
+   cada módulo (p. ej. la barra del Gantt tiene su color y el hito va en position: absolute).
+   Un tema sí las pisa con :scope .rp-track { … }. */
+:where(.rp-track, .cmb-bar, .scb-kp-track, .scb-kpi-bar) {
+  background-color: var(--rp-track-bg);
+}
+
+/* Rieles de anillos SVG (contrato y curva S) */
+:where(svg .rp-track, svg .rp-ring-track) {
+  stroke: var(--rp-track-bg);
+  fill: none;
+}
+
+:where(.rp-bar-fill) {
+  position: relative;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Pseudo-elemento de reflejo universal: permite que background-image (degradé de vidrio/luz)
+   definido en .rp-bar-fill se aplique idéntico en todas las barras (métrica, curva S, rubros y Gantt). */
+:where(.rp-bar-fill)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: inherit;
+  background-size: inherit;
+}
+
+/* Capas de reflejo de vidrio 3D continuo en anillos y arcos circulares SVG:
+   reproducen fielmente el degradé de luz y sombra de las barras a lo largo del arco.
+   Por defecto están ocultas (opacidad 0) y se activan si el tema define --rp-gloss-opacity: 1. */
+:root {
+  --rp-gloss-opacity: 0;
+}
+:where(.rp-ring-volume, .rp-ring-highlight) {
+  pointer-events: none;
+  opacity: var(--rp-gloss-opacity);
+}
+:where(.rp-ring-highlight) {
+  stroke: rgba(255, 255, 255, 0.55);
+}
+
+
+

@@ -1,0 +1,72 @@
+/* Ventana "Imprimir / PDF" (misma paleta que la importación CSV) */
+.pdfx-overlay { position: fixed; inset: 0; z-index: 1400; background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 16px; font-family: inherit; }
+.pdfx-modal { width: min(520px, 100%); max-height: 90dvh; display: flex; flex-direction: column; background: #fff; border-radius: 14px; box-shadow: 0 25px 60px rgba(2, 20, 30, .35); overflow: hidden; color: #1e293b; }
+.pdfx-modal svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.pdfx-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px 6px; }
+.pdfx-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #94a3b8; }
+.pdfx-head h2 { margin: 3px 0 0; font-size: 17px; font-weight: 800; color: #0b455b; }
+.pdfx-close { border: 0; background: transparent; color: #64748b; padding: 6px; border-radius: 8px; cursor: pointer; display: inline-flex; }
+.pdfx-close:hover { background: #f1f5f9; color: #0f172a; }
+
+.pdfx-body { padding: 8px 20px 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+.pdfx-intro { margin: 0; font-size: 12px; line-height: 1.5; color: #475569; }
+.pdfx-intro b { color: #0f172a; }
+
+.pdfx-opts { display: flex; flex-direction: column; gap: 6px; }
+.pdfx-opt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 1.5px solid #e2e8f0; background: #fff; border-radius: 10px; padding: 9px 12px; cursor: pointer; font-family: inherit; color: inherit; transition: border-color .15s, background-color .15s; }
+.pdfx-opt:hover { border-color: #94b4c2; }
+.pdfx-opt.on { border-color: #0b455b; background: #f0f7f9; }
+.pdfx-radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #94a3b8; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pdfx-opt.on .pdfx-radio { background: #0b455b; border-color: #0b455b; color: #fff; }
+.pdfx-modal .pdfx-radio svg { width: 10px; height: 10px; stroke-width: 3.5; }
+.pdfx-opt-txt { flex: 1; min-width: 0; }
+.pdfx-opt-txt b { display: block; font-size: 12.5px; color: #0f172a; }
+.pdfx-opt-txt b em { font-style: normal; font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #0e7490; background: #ecfeff; border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: 1px; }
+.pdfx-opt-txt span { display: block; font-size: 11px; color: #64748b; margin-top: 1px; }
+.pdfx-size { font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; color: #64748b; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.pdfx-size.ok { color: #047857; }
+.pdfx-size.mid { color: #b45309; }
+.pdfx-size.big { color: #b91c1c; }
+.pdfx-spin { animation: pdfx-spin 1s linear infinite; color: #94a3b8; }
+@keyframes pdfx-spin { to { transform: rotate(360deg); } }
+
+.pdfx-warn { display: flex; gap: 10px; align-items: flex-start; background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; border-radius: 10px; padding: 10px 12px; font-size: 11.5px; line-height: 1.45; }
+.pdfx-warn > svg { width: 18px; height: 18px; color: #dc2626; margin-top: 1px; }
+.pdfx-warn b { display: block; color: #991b1b; margin-bottom: 2px; }
+.pdfx-link { border: 0; background: none; padding: 0; font: inherit; font-weight: 800; color: #0b455b; text-decoration: underline; cursor: pointer; }
+.pdfx-ok { display: flex; gap: 8px; align-items: center; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; border-radius: 10px; padding: 8px 12px; font-size: 11.5px; font-weight: 600; }
+.pdfx-note { margin: 0; font-size: 10.5px; color: #94a3b8; line-height: 1.45; }
+.pdfx-note b { color: #64748b; }
+
+.pdfx-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+.pdfx-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 9px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.pdfx-btn:hover { background: #f1f5f9; }
+.pdfx-btn.primary { background: #fbbf24; border-color: #f59e0b; color: #0f172a; }
+.pdfx-btn.primary:hover { background: #f59e0b; }
+
+/* iPhone / iPad: achique de hojas para que entren en los márgenes de Safari */
+.pdfx-fit { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; background: #f8fafc; display: flex; flex-direction: column; gap: 6px; font-size: 11px; line-height: 1.45; color: #64748b; }
+.pdfx-fit-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pdfx-fit-head b { font-size: 12px; color: #0f172a; }
+.pdfx-fit span b { color: #334155; }
+.pdfx-seg { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 2px; }
+.pdfx-seg button { border: 0; background: transparent; font: inherit; font-size: 11px; font-weight: 700; color: #475569; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pdfx-seg button.on { background: #fff; color: #0b455b; box-shadow: 0 1px 2px rgba(15, 23, 42, .15); }
+
+/* Cómo se genera: PDF del programa / impresión del sistema */
+.pdfx-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.pdfx-mode > button { display: flex; gap: 8px; align-items: flex-start; text-align: left; border: 1.5px solid #e2e8f0; background: #fff; border-radius: 10px; padding: 9px 10px; cursor: pointer; font-family: inherit; color: inherit; }
+.pdfx-mode > button:hover { border-color: #94b4c2; }
+.pdfx-mode > button.on { border-color: #0b455b; background: #f0f7f9; }
+.pdfx-mode > button > svg { width: 16px; height: 16px; color: #0b455b; margin-top: 1px; }
+.pdfx-mode b { display: block; font-size: 12px; color: #0f172a; }
+.pdfx-mode span span { display: block; font-size: 10.5px; color: #64748b; line-height: 1.35; margin-top: 2px; }
+@media (max-width: 460px) { .pdfx-mode { grid-template-columns: 1fr; } }
+.pdfx-busy { background: #f8fafc; border-color: #e2e8f0; color: #334155; }
+.pdfx-btn:disabled { opacity: .7; cursor: default; }
+.pdfx-mode { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 620px) { .pdfx-mode { grid-template-columns: 1fr; } }
+.pdfx-steps { border: 1px solid #cfe1e8; background: #f3f9fb; border-radius: 10px; padding: 9px 12px; font-size: 11.5px; color: #334155; }
+.pdfx-steps > b { display: block; font-size: 12px; color: #0b455b; margin-bottom: 4px; }
+.pdfx-steps ol { margin: 0; padding-left: 18px; display: grid; gap: 3px; line-height: 1.4; }

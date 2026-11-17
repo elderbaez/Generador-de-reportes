@@ -1,0 +1,17 @@
+/* Módulo Diagrama (DiagramBlock) */
+.rp-diagram { margin: 0; break-inside: avoid; }
+.rp-diagram .rp-mermaid { margin: 1mm 0 0; }
+.rp-diagram .rp-mermaid > svg { max-height: var(--dg-max, 120mm); max-width: 100%; }
+.rp-diagram-caption { margin-top: 1.5mm; padding: 1mm 2mm; font-size: 7.5pt; text-align: center; color: #334155; border-top: 1px solid var(--rp-line, #e2e8f0); }
+.rp-diagram-label { color: var(--rp-primary, #0b455b); }
+.rp-diagram-capcell { display: inline; }
+.rp-diagram-empty {
+  display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10mm; border: 1.5px dashed #cbd5e1;
+  border-radius: 8px; color: #94a3b8; font-size: 9pt; font-weight: 600; cursor: pointer;
+}
+.rp-diagram-empty svg { width: 16px; height: 16px; }
+.rp-diagram-editor { margin-bottom: 2mm; display: flex; flex-direction: column; gap: 4px; }
+.rp-diagram-help { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #64748b; }
+.rp-diagram-help svg { width: 13px; height: 13px; color: var(--rp-primary, #0b455b); flex-shrink: 0; }
+.rp-diagram-help code { background: #f1f5f9; padding: 0 3px; border-radius: 3px; }
+.rp-diagram-caption .rp-diagram-capcell[contenteditable="true"] { display: inline-block; min-width: 50mm; text-align: left; }

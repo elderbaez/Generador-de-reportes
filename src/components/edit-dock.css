@@ -1,0 +1,124 @@
+/* Panel de edición flotante: fijo abajo y centrado, por encima de todo */
+.edit-dock {
+  position: fixed;
+  /* Centrado en la zona de la hoja (no en la ventana): así no se monta sobre el panel de
+     edición. App publica dónde está esa zona en --rp-view-left / --rp-view-width. */
+  left: calc(var(--rp-view-left, 0px) + var(--rp-view-width, 100vw) / 2);
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 1200;
+  width: max-content;
+  max-width: calc(var(--rp-view-width, 100vw) - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+  pointer-events: none;
+  font-family: inherit;
+}
+.edit-dock-slot { pointer-events: auto; }
+.edit-dock-slot:empty { display: none; }
+
+/* Panel oscuro que agrupa opciones, ayuda y barra principal */
+.edit-dock-panel {
+  pointer-events: auto;
+  background: var(--ui-glass-bg);
+  color: var(--ui-glass-fg);
+  border-radius: 12px;
+  border: 1px solid var(--ui-glass-border);
+  box-shadow: var(--ui-glass-shadow);
+  -webkit-backdrop-filter: var(--ui-glass-blur);
+  backdrop-filter: var(--ui-glass-blur);
+  overflow: hidden;
+}
+.edit-dock-panel:not(:has(.edit-dock-slot:not(:empty))) { display: none; }
+.edit-dock-options,
+.edit-dock-main {
+  padding: 7px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  font-size: 11px;
+}
+.edit-dock-main { justify-content: space-between; }
+.edit-dock-hint { padding: 4px 12px; color: var(--ui-glass-muted); font-size: 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.edit-dock-panel > .edit-dock-slot:not(:empty) ~ .edit-dock-slot:not(:empty) { border-top: 1px solid rgba(255,255,255,.1); }
+.edit-dock-hint kbd { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 3px; padding: 0 4px; font-family: ui-monospace, monospace; font-size: 9.5px; color: #fff; }
+
+/* Barra de filas seleccionadas: píldora separada arriba del panel */
+.edit-dock-bulk {
+  align-self: center;
+  background: var(--ui-glass-bg);
+  color: #fff;
+  border: 1px solid var(--ui-glass-border);
+  border-radius: 12px;
+  box-shadow: var(--ui-glass-shadow);
+  -webkit-backdrop-filter: var(--ui-glass-blur);
+  backdrop-filter: var(--ui-glass-blur);
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+/* ---------- Controles ---------- */
+.dock-group { display: inline-flex; align-items: center; gap: 6px; }
+.dock-label { color: var(--ui-glass-muted); font-weight: 600; font-size: 10.5px; white-space: nowrap; }
+.dock-title { font-weight: 700; font-size: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
+.dock-title-ic { width: 20px; height: 20px; border-radius: 6px; background: var(--ui-accent); color: var(--ui-accent-fg); display: inline-flex; align-items: center; justify-content: center; }
+.dock-title-ic svg { width: 12px; height: 12px; }
+
+.dock-btn { border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; height: 26px; padding: 0 10px; border-radius: var(--ui-radius-sm); transition: background-color .15s, color .15s; font-family: inherit; white-space: nowrap; }
+.dock-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.dock-btn.ghost { background: rgba(255,255,255,.08); color: var(--ui-glass-fg); }
+.dock-btn.ghost:hover { background: rgba(255,255,255,.16); color: #fff; }
+/* Interruptor encendido: tinte, no relleno, para no competir con "Listo" */
+.dock-btn.ghost.on { background: var(--ui-accent-tint); color: var(--ui-accent-text); box-shadow: inset 0 0 0 1px var(--ui-accent-ring); }
+/* Acción de crear (Agregar fotos, rubro, documento…): blanco, fuerte pero neutro */
+.dock-btn.primary { background: #f8fafc; color: #0f172a; }
+.dock-btn.primary:hover { background: #fff; }
+.dock-btn.primary svg { color: var(--ui-brand); }
+/* Confirmar (Listo): el único ámbar relleno del panel */
+.dock-btn.accent { background: var(--ui-accent); color: var(--ui-accent-fg); }
+.dock-btn.accent:hover { background: var(--ui-accent-hover); }
+.dock-btn.danger { background: transparent; color: var(--ui-danger); }
+.dock-btn.danger:hover { background: var(--ui-danger-bg); color: #fff; }
+.dock-btn.bulk-dup { background: rgba(255,255,255,.1); color: #fff; }
+.dock-btn.bulk-dup:hover { background: rgba(255,255,255,.2); }
+.dock-btn.bulk-del { background: #f43f5e; color: #fff; }
+.dock-btn.bulk-del:hover { background: #e11d48; }
+.dock-btn input[type=file] { display: none; }
+
+.dock-seg { display: inline-flex; background: rgba(255,255,255,.08); border-radius: var(--ui-radius-sm); padding: 2px; gap: 2px; }
+.dock-seg button { border: 0; background: transparent; height: 22px; padding: 0 9px; border-radius: 5px; font-size: 10.5px; font-weight: 700; color: #cbd5e1; cursor: pointer; font-family: inherit; transition: background-color .12s, color .12s; }
+.dock-seg button:hover { color: #fff; }
+.dock-seg button.on { background: var(--ui-accent); color: var(--ui-accent-fg); }
+
+.dock-slider input[type=range] { width: 110px; accent-color: var(--ui-accent); margin: 0; cursor: pointer; }
+.dock-value { font-family: ui-monospace, monospace; font-size: 10px; font-weight: 700; color: var(--ui-accent); min-width: 40px; }
+
+.dock-check { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-weight: 600; font-size: 10.5px; color: #e2e8f0; white-space: nowrap; }
+.dock-check input { accent-color: var(--ui-accent); margin: 0; }
+
+.dock-count { padding: 0 8px; font-weight: 700; white-space: nowrap; }
+.dock-close { padding: 5px; border-radius: 8px; background: transparent; color: #fff; border: 0; cursor: pointer; display: inline-flex; }
+.dock-close:hover { background: var(--ui-glass-hover); }
+.dock-close svg { width: 14px; height: 14px; }
+
+/* Campo de texto dentro del panel (p. ej. "Numerar como") */
+.dock-input {
+  width: 96px; height: 26px; box-sizing: border-box;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+  border-radius: var(--ui-radius-sm); padding: 0 8px;
+  font: inherit; font-size: 11px; font-weight: 600; color: #fff; outline: none;
+}
+.dock-input::placeholder { color: rgba(255,255,255,.38); }
+.dock-input:focus { border-color: var(--ui-accent-ring); background: rgba(255,255,255,.12); }
+
+@media print { .edit-dock { display: none !important; } }
+
+/* Barra de formato de texto (editor de Texto y Observaciones): píldora propia sobre el panel */
+.edit-dock-format { align-self: center; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; max-width: 100%; }
+.edit-dock-format .rp-fmt-bar { box-shadow: var(--ui-glass-shadow); }

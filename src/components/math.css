@@ -1,0 +1,5 @@
+/* Ecuaciones (MathText): módulos de Texto y Observaciones */
+.rp-math-display { display: block; text-align: center; margin: 1.5mm 0; }
+.rp-math .katex { font-size: 1.12em; }
+.rp-math-src { font-family: var(--rp-font-num, ui-monospace, monospace); color: #64748b; }
+.rp-math-error { color: #b91c1c; text-decoration: underline dotted; cursor: help; }

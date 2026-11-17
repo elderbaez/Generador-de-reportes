@@ -1,0 +1,60 @@
+/* =====================================================================
+   Portada (CoverBlock). Ocupa toda la primera hoja. Selectores de una
+   clase o con el diseño: los temas (:scope .rp-cover-…) ganan.
+   ===================================================================== */
+.rp-cover {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #fff;
+  color: var(--rp-text, #172033);
+  position: relative;
+  overflow: hidden;
+}
+.rp-cover-logos { display: flex; justify-content: space-between; align-items: center; gap: 10mm; }
+.rp-cover-logo { max-height: 22mm; max-width: 55mm; object-fit: contain; }
+.rp-cover-titles { display: flex; flex-direction: column; gap: 3mm; }
+.rp-cover-kicker { font-size: 10pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rp-label, #1f4e66); }
+.rp-cover-title { margin: 0; font-family: var(--rp-font-title, inherit); font-size: 26pt; line-height: 1.12; font-weight: 800; color: var(--rp-primary, #0b455b); }
+.rp-cover-subtitle { font-size: 14pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--rp-accent, #f4c84a); }
+.rp-cover-photo { background: var(--rp-surface-2, #f1f5f9) center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: #64748b; }
+.rp-cover-meta { flex-shrink: 0; display: grid; grid-template-columns: max-content 1fr; column-gap: 6mm; row-gap: 2mm; font-size: 10pt; }
+.rp-cover-meta-row { display: contents; }
+.rp-cover-meta-row > .rp-hd-x { position: static; transform: none; grid-column: 2; justify-self: end; margin-top: -6mm; }
+.rp-cover-meta-label { font-size: 8pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #64748b; padding-top: .6mm; }
+.rp-cover-meta-value { font-weight: 600; color: var(--rp-text, #172033); }
+.rp-cover-meta > .rp-hd-add { grid-column: 1 / -1; justify-self: start; }
+.rp-cover-note { font-size: 9pt; color: #64748b; }
+
+/* ---- Clásica: banda de color arriba, título al centro, datos abajo ---- */
+.rp-cover--classic .rp-cover-band { background: var(--rp-primary, #0b455b); padding: 10mm 16mm; min-height: 22mm; }
+.rp-cover--classic .rp-cover-photo { flex: 0 1 85mm; min-height: 30mm; margin: 0; }
+.rp-cover--classic .rp-cover-body { flex: 1 1 auto; min-height: 0; padding-top: 6mm; padding-bottom: 6mm; display: flex; flex-direction: column; justify-content: center; padding: 0 20mm; text-align: center; }
+.rp-cover--classic .rp-cover-titles { align-items: center; }
+.rp-cover--classic .rp-cover-rule { width: 40mm; height: 1.2mm; background: var(--rp-accent, #f4c84a); margin: 8mm auto 0; border-radius: 1mm; }
+.rp-cover--classic .rp-cover-meta { margin: 0 20mm 10mm; padding-top: 6mm; border-top: 1px solid var(--rp-line, #e2e8f0); }
+.rp-cover--classic .rp-cover-note { padding: 0 20mm 12mm; text-align: center; }
+.rp-cover--classic .rp-cover-band .rp-hd-edit { outline-color: rgba(255,255,255,.45); }
+
+/* ---- Con foto: logos arriba, foto grande, título sobre banda de color ---- */
+.rp-cover--photo .rp-cover-logos { padding: 9mm 16mm 7mm; }
+.rp-cover--photo .rp-cover-photo { flex: 1 1 0; min-height: 40mm; }
+.rp-cover--photo .rp-cover-body { background: var(--rp-primary, #0b455b); color: #fff; padding: 10mm 16mm 11mm; }
+.rp-cover--photo .rp-cover-kicker { color: rgba(255,255,255,.75); }
+.rp-cover--photo .rp-cover-title { color: #fff; }
+.rp-cover--photo .rp-cover-body .rp-hd-edit { outline-color: rgba(255,255,255,.45); }
+.rp-cover--photo .rp-cover-meta { padding: 8mm 16mm 4mm; }
+.rp-cover--photo .rp-cover-note { padding: 0 16mm 10mm; }
+
+/* ---- Minimalista: blanco, texto alineado a la izquierda con una barra de acento ---- */
+.rp-cover--minimal { padding: 18mm 20mm 16mm; }
+.rp-cover--minimal .rp-cover-body { flex: 1 1 auto; min-height: 0; display: flex; gap: 7mm; align-items: center; }
+.rp-cover--minimal .rp-cover-bar { width: 2.2mm; align-self: stretch; max-height: 80mm; margin: auto 0; background: var(--rp-accent, #f4c84a); border-radius: 1mm; }
+.rp-cover--minimal .rp-cover-title { font-size: 30pt; }
+.rp-cover--minimal .rp-cover-subtitle { color: var(--rp-primary, #0b455b); opacity: .8; }
+.rp-cover--minimal .rp-cover-photo { flex: 0 1 70mm; min-height: 25mm; margin-bottom: 10mm; border-radius: var(--rp-radius, 6px); }
+.rp-cover--minimal .rp-cover-meta { margin-bottom: 8mm; }
+
+.rp-cover .rp-hd-edit { outline-color: rgba(11,69,91,.35); }

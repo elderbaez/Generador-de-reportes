@@ -1,0 +1,13 @@
+/* Cuadro de fórmula con variables (FormulaInput) */
+.rp-fx-input { font: inherit; color: inherit; background: transparent; border: 0; outline: none; min-width: 0; font-variant-numeric: tabular-nums; }
+.rp-fx-pop { width: 300px; max-height: 330px; overflow: auto; padding: 4px; }
+.rp-fx-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 4px 6px; border: 0; border-radius: 6px; background: transparent; text-align: left; cursor: pointer; font: inherit; }
+.rp-fx-item.is-active { background: #e2eff3; }
+.rp-fx-ico { width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background: #eef4f6; color: #0b455b; }
+.rp-fx-ico svg { width: 12px; height: 12px; }
+.rp-fx-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+.rp-fx-txt b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #0b455b; }
+.rp-fx-txt span { font-size: 10.5px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-fx-val { flex-shrink: 0; max-width: 40%; font-size: 10.5px; font-variant-numeric: tabular-nums; color: #334155; background: #f1f5f9; border-radius: 4px; padding: 1px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-fx-empty { padding: 8px; font-size: 11px; color: #94a3b8; }
+.rp-fx-foot { margin-top: 3px; padding: 4px 6px 2px; border-top: 1px solid #eef2f6; font-size: 10px; color: #94a3b8; }

@@ -1,11 +1,18 @@
 @import "tailwindcss";
 
+/* iPad (y otras tabletas) con mouse o trackpad: el navegador se declara "sin hover"
+   y Tailwind no mostraba nada que dependa de pasar el puntero (botones de fotos,
+   barras de bloque…). Se usa :hover sin esa condición: con el dedo, un toque los muestra. */
+@custom-variant hover (&:hover);
+
 @layer base {
   html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
+    /* iPad: que la página entera no "rebote" ni se desplace (solo se desplazan los paneles) */
+    overscroll-behavior: none;
   }
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -49,49 +56,128 @@
     margin: 0;
   }
 
-  html, body {
+  /* Reset all potential clipping ancestors */
+  html,
+  body,
+  #root,
+  #root > div,
+  #root > div > div,
+  main#report-scroll-viewport,
+  main#report-scroll-viewport > div {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    transform: none !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    font-size: 11px !important;
   }
 
-  .no-print {
+  /* Hide screen-only interactive UI */
+  .no-print,
+  aside,
+  header.no-print,
+  button,
+  .hover\:flex,
+  [role="tooltip"] {
     display: none !important;
   }
 
-  .print-only {
+  /* Main container holding all A4 pages - MUST BE BLOCK, NOT FLEX */
+  #report-print-container {
     display: block !important;
-  }
-
-  .preview-wrapper {
+    position: static !important;
+    width: 210mm !important;
+    margin: 0 auto !important;
     padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
+    transform: none !important;
     overflow: visible !important;
-    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
   }
 
-  .a4-sheet {
+  /* Each A4 Page wrapper */
+  .sheet-page-wrapper {
+    display: block !important;
+    position: relative !important;
     width: 210mm !important;
     height: 297mm !important;
     min-height: 297mm !important;
     max-height: 297mm !important;
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-    page-break-after: always !important;
-    break-after: page !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     overflow: hidden !important;
+    background: #ffffff !important;
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
-  .a4-sheet:last-of-type {
+  /* Force page break before each sheet after the first */
+  .sheet-page-wrapper + .sheet-page-wrapper {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Remove page break after the last page */
+  .sheet-page-wrapper:last-child,
+  .sheet-page-wrapper:last-of-type {
     page-break-after: auto !important;
     break-after: auto !important;
+  }
+
+  /* Physical A4 Sheet styling for print */
+  .a4-sheet {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+  }
+
+  /* iPhone / iPad: Safari agrega sus márgenes y la hoja A4 entera no entra;
+     se achica cada hoja (ver utils/printImages applyPrintFit) */
+  html.rp-print-fit .sheet-page-wrapper {
+    zoom: var(--rp-print-fit, 0.9);
+  }
+
+  /* Avoid break inside blocks and photos */
+  .photo-card,
+  .photos-block-container,
+  table,
+  tr,
+  img {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
@@ -157,4 +243,122 @@
 .photos-block-container {
   break-inside: avoid !important;
   page-break-inside: avoid !important;
+}
+
+/* Minimalist range slider */
+.minimal-slider {
+  @apply w-full h-0.5 bg-slate-300 rounded-full appearance-none cursor-pointer;
+}
+
+.minimal-slider::-webkit-slider-thumb {
+  @apply appearance-none w-2.5 h-2.5 rounded-full bg-slate-500 hover:bg-slate-700 transition-colors;
+}
+
+/* =====================================================================
+   Vista para compartir (iPhone/iPad): en PANTALLA, lo mismo que al imprimir.
+   Solo las hojas, una pegada a la otra, sin interfaz, sin sombras ni zoom, y
+   con el desplazamiento en el documento: el menú Compartir de Safari →
+   Opciones → PDF captura la página entera tal cual (en vector).
+   ===================================================================== */
+html.rp-share-view,
+html.rp-share-view body,
+html.rp-share-view #root,
+html.rp-share-view #root > div,
+html.rp-share-view #root > div > div,
+html.rp-share-view main#report-scroll-viewport,
+html.rp-share-view main#report-scroll-viewport > div,
+html.rp-share-view main#report-scroll-viewport > div > div {
+  display: block !important;
+  position: static !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+  transform: none !important;
+  zoom: 1 !important;
+}
+html.rp-share-view .no-print,
+html.rp-share-view aside,
+html.rp-share-view header.no-print,
+html.rp-share-view .a4-sheet button,
+html.rp-share-view #report-print-container button,
+html.rp-share-view [role="tooltip"],
+html.rp-share-view .in-situ-divider {
+  display: none !important;
+}
+html.rp-share-view #report-print-container {
+  display: block !important;
+  position: static !important;
+  width: var(--rp-page-w, 210mm) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  zoom: 1 !important;
+  gap: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+html.rp-share-view .sheet-page-wrapper {
+  display: block !important;
+  position: relative !important;
+  width: var(--rp-page-w, 210mm) !important;
+  height: var(--rp-page-h, 297mm) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  transform: none !important;
+  zoom: 1 !important;
+}
+html.rp-share-view .a4-sheet {
+  margin: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  height: var(--rp-page-h, 297mm) !important;
+  min-height: var(--rp-page-h, 297mm) !important;
+  max-height: var(--rp-page-h, 297mm) !important;
+  overflow: hidden !important;
+}
+
+/* Barra de la vista para compartir: queda arriba y se oculta antes de compartir */
+.rp-share-bar {
+  position: fixed; z-index: 2147483000; top: 10px; left: 50%; transform: translateX(-50%);
+  width: min(560px, calc(100vw - 20px)); display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-radius: 14px; background: rgba(15, 23, 42, .92); color: #fff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .35); font: 500 12px/1.35 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+.rp-share-txt { flex: 1; min-width: 0; }
+.rp-share-txt b { display: block; font-size: 13px; }
+.rp-share-txt span { display: block; color: #cbd5e1; font-size: 11px; }
+.rp-share-bar button { flex-shrink: 0; height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; font: 700 12px 'Plus Jakarta Sans', system-ui, sans-serif; cursor: pointer; }
+.rp-share-bar button.is-exit { background: #f4c84a; border-color: #f4c84a; color: #0f172a; }
+@media print { .rp-share-bar { display: none !important; } }
+
+/* Vista para compartir, al armar el PDF (Safari lo hace como una impresión): cada hoja
+   achicada para entrar en el margen fijo de Safari, centrada, una por página */
+@media print {
+  html.rp-share-view #report-print-container {
+    width: auto !important;
+  }
+  html.rp-share-view .sheet-page-wrapper {
+    zoom: var(--rp-share-fit, 0.88) !important;
+    margin: 0 auto !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+  html.rp-share-view .sheet-page-wrapper:last-child {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
 }

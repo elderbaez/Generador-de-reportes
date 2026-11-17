@@ -1,0 +1,91 @@
+/* =====================================================================
+   Encabezado institucional (HeaderBlock). Selectores de UNA clase a
+   propósito: los temas (:scope .rp-header-…) siempre ganan.
+   ===================================================================== */
+.rp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4mm;
+  padding: 2.6mm 5.3mm;
+  background: var(--rp-primary, #0b455b);
+  color: #fff;
+  position: relative;
+}
+.rp-header-logo {
+  width: 28mm;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rp-header-logo img { max-height: 19mm; max-width: 28mm; object-fit: contain; }
+.rp-hd-logo-empty {
+  width: 24mm; height: 16mm; border: 1px solid rgba(255,255,255,.3); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; font-size: 8pt; font-weight: 700; color: rgba(255,255,255,.7);
+}
+.rp-header-titles { flex: 1; min-width: 0; text-align: center; padding: 0 2mm; display: flex; flex-direction: column; gap: .5mm; }
+.rp-header-line { position: relative; line-height: 1.2; }
+.rp-header-line-text { display: block; margin: 0; font: inherit; color: inherit; }
+.rp-header-director { font-size: 8pt; font-weight: 600; color: #e2e8f0; text-transform: uppercase; letter-spacing: .03em; }
+.rp-header-project { font-size: 11.5pt; font-weight: 700; color: #fff; }
+.rp-header-report { font-size: 10.5pt; font-weight: 900; color: var(--rp-accent, #f4c84a); letter-spacing: 1.5px; text-transform: uppercase; }
+.rp-header-line-md { font-size: 9.5pt; font-weight: 600; color: #fff; }
+.rp-header-date { font-size: 8.5pt; font-weight: 700; color: #f1f5f9; }
+
+/* Bloque de datos (Empresa) / columna de control (ISO) */
+.rp-header-meta { flex-shrink: 0; display: flex; flex-direction: column; gap: .6mm; font-size: 7.5pt; min-width: 34mm; }
+.rp-header-meta-row { display: flex; gap: 2mm; justify-content: space-between; position: relative; }
+.rp-header-meta-label { font-weight: 600; opacity: .75; text-transform: uppercase; letter-spacing: .04em; font-size: 6.5pt; }
+.rp-header-meta-value { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+
+/* ---- Empresa: textos a la izquierda, datos a la derecha con una línea divisoria ---- */
+.rp-header--company .rp-header-titles { text-align: left; }
+.rp-header--company .rp-header-logo.is-left { width: auto; max-width: 34mm; }
+.rp-header--company .rp-header-meta { border-left: 1px solid rgba(255,255,255,.3); padding-left: 3.5mm; }
+
+/* ---- ISO: tabla de celdas sobre fondo blanco ---- */
+.rp-header--iso {
+  background: #fff;
+  color: var(--rp-text, #172033);
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  margin: 3mm 5.3mm 0;
+  border: 1px solid var(--rp-border, #94a3b8);
+}
+.rp-header--iso > * { border-left: 1px solid var(--rp-border, #94a3b8); padding: 2mm 3mm; display: flex; flex-direction: column; justify-content: center; }
+.rp-header--iso > :first-child { border-left: 0; }
+.rp-header--iso .rp-header-logo { width: 32mm; align-items: center; }
+.rp-header--iso .rp-header-director { color: var(--rp-label, #1f4e66); }
+.rp-header--iso .rp-header-project, .rp-header--iso .rp-header-line-md { color: var(--rp-primary, #0b455b); }
+.rp-header--iso .rp-header-report { color: var(--rp-primary, #0b455b); }
+.rp-header--iso .rp-header-date { color: #475569; }
+.rp-header--iso .rp-header-meta { padding: 0; gap: 0; min-width: 40mm; }
+.rp-header--iso .rp-header-meta-row { flex: 1; align-items: center; padding: .8mm 2.5mm; border-top: 1px solid var(--rp-border, #94a3b8); }
+.rp-header--iso .rp-header-meta-row:first-child { border-top: 0; }
+.rp-header--iso .rp-header-meta-label { opacity: 1; color: #64748b; }
+.rp-header--iso .rp-hd-logo-empty { border-color: #cbd5e1; color: #94a3b8; }
+
+/* ---- Edición (no se imprime) ---- */
+.rp-hd-edit { outline: 1px dashed rgba(255,255,255,.45); outline-offset: 1px; border-radius: 2px; cursor: text; min-width: 6mm; }
+.rp-header--iso .rp-hd-edit { outline-color: rgba(11,69,91,.4); }
+.rp-hd-edit:focus { outline-style: solid; }
+.rp-hd-edit:empty::before { content: attr(data-placeholder); opacity: .5; font-style: italic; }
+.rp-hd-line-tools {
+  position: absolute; right: -2mm; top: 50%; transform: translate(100%, -50%); z-index: 5;
+  display: inline-flex; gap: 2px; align-items: center; background: rgba(15,23,42,.85); border-radius: 6px; padding: 2px;
+  opacity: 0; transition: opacity .12s; font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none;
+}
+.rp-header-line:hover .rp-hd-line-tools, .rp-header-line:focus-within .rp-hd-line-tools { opacity: 1; }
+.rp-hd-line-tools select { font-size: 10px; border: 0; border-radius: 4px; padding: 1px 2px; color: #0f172a; background: #fff; }
+.rp-hd-line-tools button, .rp-hd-x { border: 0; background: transparent; color: #fff; padding: 2px; border-radius: 4px; cursor: pointer; display: inline-flex; }
+.rp-hd-line-tools button:hover { background: rgba(255,255,255,.15); }
+.rp-hd-line-tools svg, .rp-hd-x svg, .rp-hd-add svg, .rp-hd-logo-add svg { width: 12px; height: 12px; }
+.rp-hd-x { position: absolute; right: -16px; top: 50%; transform: translateY(-50%); color: inherit; opacity: .6; }
+.rp-hd-add, .rp-hd-logo-add {
+  align-self: center; display: inline-flex; align-items: center; gap: 4px; border: 1px dashed currentColor; background: transparent;
+  color: inherit; opacity: .75; border-radius: 6px; padding: 2px 8px; font-size: 9px; font-weight: 700; cursor: pointer;
+}
+.rp-hd-logo-add { padding: 6px 8px; }
+.rp-hd-add:hover, .rp-hd-logo-add:hover { opacity: 1; }
