@@ -33,10 +33,11 @@ import { preloadBlocks } from './components/blocks/lazyBlocks';
 import { HeaderBar } from './components/HeaderBar';
 import { EditorSidebar } from './components/EditorSidebar';
 import { ReportSheet } from './components/ReportSheet';
+const WelcomeModal = lazy(() => import('./components/WelcomeModal').then((m) => ({ default: m.WelcomeModal })));
 const TemplateModal = lazy(() => import('./components/TemplateModal').then((m) => ({ default: m.TemplateModal })));
 import { DeleteBlockConfirmModal } from './components/DeleteBlockConfirmModal';
 import { distributePhotosAcrossPages, MeasuredHeights } from './utils/photoPagination';
-import { ReportTemplateData, getLastTemplateId, findTemplateById, clearLastTemplateId } from './utils/templateManager';
+import { ReportTemplateData, shouldShowWelcome, getLastTemplateId, findTemplateById, clearLastTemplateId } from './utils/templateManager';
 import { installRangeWheel } from './utils/rangeWheel';
 const ThemePanel = lazy(() => import('./components/ThemePanel').then((m) => ({ default: m.ThemePanel })));
 const PdfExportModal = lazy(() => import('./components/PdfExportModal').then((m) => ({ default: m.PdfExportModal })));
@@ -188,6 +189,7 @@ export default function App() {
   const [selectedRubricIds, setSelectedRubricIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('blocks');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState<boolean>(false);
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(() => shouldShowWelcome());
   // Tema del informe (colores, fuentes, forma): se aplica en vivo y se recuerda entre sesiones
   const [theme, setTheme] = useState<ReportTheme>(() => loadCurrentTheme());
   const [isThemeOpen, setIsThemeOpen] = useState<boolean>(false);
@@ -1200,6 +1202,7 @@ ${printArea.innerHTML}
         onImportJson={handleImportJson}
         onLoadExample={handleLoadExample}
         onOpenTemplates={() => setIsTemplateModalOpen(true)}
+        onOpenWelcome={() => setIsWelcomeOpen(true)}
         onOpenTheme={() => { if (editingSomething) { setInlineEditingBlockId(null); setIsThemeOpen(true); } else setIsThemeOpen((v) => !v); }}
         isThemeOpen={themeVisible}
         isSidebarOpen={isSidebarOpen}
@@ -1508,6 +1511,17 @@ ${printArea.innerHTML}
             photo={activeAnnotatingPhoto}
             onClose={() => setActiveAnnotatingPhoto(null)}
             onSave={handleSaveAnnotatedBitmap}
+          />
+        </Suspense>
+      )}
+
+      {isWelcomeOpen && (
+        <Suspense fallback={null}>
+          <WelcomeModal
+            onSelectTemplate={(d) => { handleSelectTemplate(d); setStartupTemplate(null); }}
+            onImportJson={handleImportJson}
+            onOpenTemplates={() => setIsTemplateModalOpen(true)}
+            onClose={() => setIsWelcomeOpen(false)}
           />
         </Suspense>
       )}
