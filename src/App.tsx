@@ -29,6 +29,7 @@ import {
   DEFAULT_OBSERVATIONS,
   DEFAULT_BLOCKS,
 } from './utils/defaultData';
+import { preloadBlocks } from './components/blocks/lazyBlocks';
 import { HeaderBar } from './components/HeaderBar';
 import { EditorSidebar } from './components/EditorSidebar';
 import { ReportSheet } from './components/ReportSheet';
@@ -143,6 +144,11 @@ function useEverTrue(v: boolean): boolean {
 }
 
 export default function App() {
+  useEffect(() => {
+    const w = window as any;
+    const id = w.requestIdleCallback ? w.requestIdleCallback(() => preloadBlocks()) : setTimeout(() => preloadBlocks(), 1500);
+    return () => (w.cancelIdleCallback ? w.cancelIdleCallback(id) : clearTimeout(id));
+  }, []);
   const [projectData, setProjectData] = useState<ProjectData>(DEFAULT_PROJECT_DATA);
   const [rubrics, setRubrics] = useState<RubricItem[]>(DEFAULT_RUBRICS);
   const [pendings, setPendings] = useState<PendingItem[]>(DEFAULT_PENDINGS);
@@ -1008,6 +1014,7 @@ export default function App() {
   const doPrint = async (preset: PdfPreset, fit?: number) => {
     setPdfOpen(false);
     if (fit != null) savePrintFit(fit);
+    await preloadBlocks();
     await new Promise((r) => setTimeout(r, 80));
     const root = document.getElementById('report-print-container');
     let restore = () => {};

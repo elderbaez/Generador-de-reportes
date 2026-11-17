@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { pageHmm, pageLabel, getPageSetup } from '../utils/pageSetup';
 import {
   ProjectData,
@@ -10,25 +10,20 @@ import {
   BlockId,
   BlockType,
 } from '../types';
+import { GanttBlock, MapBlock, ContractMetricsBlock, SituationBlock, SCurveBlock, WeatherBlock } from './blocks/lazyBlocks';
 import { HeaderBlock, InlineText } from './blocks/HeaderBlock';
 import { CoverBlock } from './blocks/CoverBlock';
 import { TocBlock, buildToc } from './blocks/TocBlock';
 import { HtmlBlock } from './blocks/HtmlBlock';
 import { DiagramBlock } from './blocks/DiagramBlock';
-import { GanttBlock } from './blocks/GanttBlock';
-import { MapBlock } from './blocks/MapBlock';
 import { RefsContext, buildRefIndex, buildRefCatalog, setRefCatalog } from '../utils/refs';
 import { normalizeHeader, resolveHeaderText } from '../utils/header';
-import { ContractMetricsBlock } from './blocks/ContractMetricsBlock';
-import { SituationBlock } from './blocks/SituationBlock';
 import { PendingBoxBlock } from './blocks/PendingBoxBlock';
 import { PhotosBlock } from './blocks/PhotosBlock';
 import { ObservationsBlock } from './blocks/ObservationsBlock';
 import { TextBlock } from './blocks/TextBlock';
 import { SpecsBlock } from './blocks/SpecsBlock';
 import { SignaturesBlock } from './blocks/SignaturesBlock';
-import { SCurveBlock } from './blocks/SCurveBlock';
-import { WeatherBlock } from './blocks/WeatherBlock';
 import { DocumentBlock } from './blocks/DocumentBlock';
 import { EditDock, DockButton, DockGroup, DockSegmented, DockSlider, DockCheck } from './EditDock';
 import { EditableCell, selectAllText } from './table/NotionTable';
@@ -1118,7 +1113,7 @@ export const ReportSheet: React.FC<ReportSheetProps> = ({
           {/* Continuation photos blocks if divided across pages */}
           {continuationPhotoBlocksOnThisPage.map((pBlock) => (
             <React.Fragment key={`cont-${pBlock.id}`}>
-              {renderBlockContent(pBlock)}
+              <Suspense fallback={<div style={{ minHeight: 40 }} />}>{renderBlockContent(pBlock)}</Suspense>
             </React.Fragment>
           ))}
 
@@ -1132,7 +1127,7 @@ export const ReportSheet: React.FC<ReportSheetProps> = ({
               className={`rp-block rp-block-${tBlock.type} rp-block-cont group relative flow-root cursor-pointer`}
               title="Doble clic para editar este texto"
             >
-              {renderBlockContent(tBlock)}
+              <Suspense fallback={<div style={{ minHeight: 40 }} />}>{renderBlockContent(tBlock)}</Suspense>
             </div>
           ))}
           {/* Insertar después del texto: va al pie de su último tramo */}
@@ -1193,7 +1188,7 @@ export const ReportSheet: React.FC<ReportSheetProps> = ({
                     title="Doble clic para editar este bloque"
                   >
                     {inlineEditingBlockId === block.id && renderBlockEditingToolbar(block)}
-                    {renderBlockContent(block)}
+                    <Suspense fallback={<div style={{ minHeight: 40 }} />}>{renderBlockContent(block)}</Suspense>
                     {/* Al acercarse al borde: "+" para poner otro módulo al lado */}
                     {colOk && <ColumnAdder side="left" onPick={(t) => onInsertColumn!(block.id, 'left', t)} />}
                     {colOk && <ColumnAdder side="right" onPick={(t) => onInsertColumn!(block.id, 'right', t)} />}
