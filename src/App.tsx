@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { lazy, Suspense, useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Maximize2, X, Move, RotateCcw, SlidersHorizontal, ZoomIn, ZoomOut } from 'lucide-react';
 
 /** Escala mínima de las hojas (en un teléfono la hoja entera entra a ~45 %) */
 const ZOOM_MIN = 0.25;
 import { PhotoAnnotationsOverlay } from './components/PhotoAnnotationsOverlay';
-import { PhotoAnnotationModal } from './components/PhotoAnnotationModal';
+const PhotoAnnotationModal = lazy(() => import('./components/PhotoAnnotationModal').then((m) => ({ default: m.PhotoAnnotationModal })));
 import {
   ProjectData,
   RubricItem,
@@ -32,13 +32,13 @@ import {
 import { HeaderBar } from './components/HeaderBar';
 import { EditorSidebar } from './components/EditorSidebar';
 import { ReportSheet } from './components/ReportSheet';
-import { TemplateModal } from './components/TemplateModal';
+const TemplateModal = lazy(() => import('./components/TemplateModal').then((m) => ({ default: m.TemplateModal })));
 import { DeleteBlockConfirmModal } from './components/DeleteBlockConfirmModal';
 import { distributePhotosAcrossPages, MeasuredHeights } from './utils/photoPagination';
 import { ReportTemplateData, getLastTemplateId, findTemplateById, clearLastTemplateId } from './utils/templateManager';
 import { installRangeWheel } from './utils/rangeWheel';
-import { ThemePanel } from './components/ThemePanel';
-import { PdfExportModal } from './components/PdfExportModal';
+const ThemePanel = lazy(() => import('./components/ThemePanel').then((m) => ({ default: m.ThemePanel })));
+const PdfExportModal = lazy(() => import('./components/PdfExportModal').then((m) => ({ default: m.PdfExportModal })));
 import { MentionLayer } from './components/MentionLayer';
 import { DEFAULT_DIAGRAM } from './components/blocks/DiagramBlock';
 import { exampleTasks } from './utils/gantt';
@@ -133,6 +133,13 @@ export function migrateObservationSignatures(
     signaturesItems: items,
   };
   return { blocks: normalizeBlockOrder([...renamed, sig]), observations };
+}
+
+/** Verdadero desde la primera vez que `v` es true: monta un panel diferido una sola vez y lo conserva. */
+function useEverTrue(v: boolean): boolean {
+  const seen = useRef(false);
+  if (v) seen.current = true;
+  return seen.current;
 }
 
 export default function App() {
@@ -470,6 +477,8 @@ export default function App() {
   // (no tapa los editores) y vuelve solo al terminar.
   const editingSomething = !!inlineEditingBlockId || !!activeAnnotatingPhoto || !!activeFreeFramingPhoto;
   const themeVisible = isThemeOpen && !editingSomething;
+  const everTheme = useEverTrue(themeVisible);
+  const everTemplates = useEverTrue(isTemplateModalOpen);
 
 
   // Dragging states for Free Framing mouse drag
@@ -1486,30 +1495,38 @@ ${printArea.innerHTML}
       )}
 
       {/* Dedicated Full-Image Annotation Modal (Baked into Bitmap) */}
-      <PhotoAnnotationModal
-        photo={activeAnnotatingPhoto}
-        onClose={() => setActiveAnnotatingPhoto(null)}
-        onSave={handleSaveAnnotatedBitmap}
-      />
+      {activeAnnotatingPhoto && (
+        <Suspense fallback={null}>
+          <PhotoAnnotationModal
+            photo={activeAnnotatingPhoto}
+            onClose={() => setActiveAnnotatingPhoto(null)}
+            onSave={handleSaveAnnotatedBitmap}
+          />
+        </Suspense>
+      )}
 
       {/* Template Manager Modal */}
-      <TemplateModal
-        isOpen={isTemplateModalOpen}
-        onClose={() => setIsTemplateModalOpen(false)}
-        currentData={{
-          projectData,
-          rubrics,
-          pendings,
-          photos,
-          observations,
-          blocks,
-          photoColumns,
-          photoHeightMm,
-          theme,
-          pageSetup,
-        }}
-        onSelectTemplate={handleSelectTemplate}
-      />
+      {everTemplates && (
+        <Suspense fallback={null}>
+        <TemplateModal
+          isOpen={isTemplateModalOpen}
+          onClose={() => setIsTemplateModalOpen(false)}
+          currentData={{
+            projectData,
+            rubrics,
+            pendings,
+            photos,
+            observations,
+            blocks,
+            photoColumns,
+            photoHeightMm,
+            theme,
+            pageSetup,
+          }}
+          onSelectTemplate={handleSelectTemplate}
+        />
+        </Suspense>
+      )}
 
       {/* Aviso: se abrió con la última plantilla */}
       {startupTemplate && (
@@ -1542,16 +1559,16 @@ ${printArea.innerHTML}
       <MentionLayer />
 
       {pdfOpen && (
-        <PdfExportModal
+        <Suspense fallback={null}><PdfExportModal
           totalPages={totalPages}
           onClose={() => setPdfOpen(false)}
           onPrint={doPrint}
           onShareView={openShareView}
           fileName={`reporte_semanal_${projectData.reportDate || 'a4'}.pdf`}
           title={projectData.project || 'Reporte semanal de obra'}
-        />
+        /></Suspense>
       )}
-      <ThemePanel isOpen={themeVisible} theme={theme} onChange={setTheme} pageSetup={pageSetup} onPageSetupChange={setPageSetup} onClose={() => setIsThemeOpen(false)} onWideChange={setIsThemeWide} />
+      {everTheme && <Suspense fallback={null}><ThemePanel isOpen={themeVisible} theme={theme} onChange={setTheme} pageSetup={pageSetup} onPageSetupChange={setPageSetup} onClose={() => setIsThemeOpen(false)} onWideChange={setIsThemeWide} /></Suspense>}
 
       {/* Floating Block Deletion Confirmation Modal */}
       <DeleteBlockConfirmModal
