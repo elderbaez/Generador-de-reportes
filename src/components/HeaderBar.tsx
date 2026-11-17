@@ -12,6 +12,7 @@ import {
   ZoomIn,
   ZoomOut,
   Sparkles,
+  LayoutGrid,
 } from 'lucide-react';
 
 interface HeaderBarProps {
@@ -24,6 +25,7 @@ interface HeaderBarProps {
   onImportJson: (file: File) => void;
   onLoadExample: () => void;
   onOpenTemplates?: () => void;
+  onOpenWelcome?: () => void;
   onOpenTheme?: () => void;
   isThemeOpen?: boolean;
   isSidebarOpen?: boolean;
@@ -40,6 +42,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onImportJson,
   onLoadExample,
   onOpenTemplates,
+  onOpenWelcome,
   onOpenTheme,
   isThemeOpen,
   isSidebarOpen,
@@ -106,6 +109,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 
       {/* Action Buttons */}
       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        {onOpenWelcome && (
+          <button
+            type="button"
+            onClick={onOpenWelcome}
+            className="px-2.5 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-md text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ring-1 ring-white/20 shadow-2xs"
+            title="Nuevo informe: elegir un tipo de informe"
+          >
+            <LayoutGrid className="w-3.5 h-3.5 text-[#f4c84a]" />
+            <span className="hidden sm:inline">Nuevo</span>
+          </button>
+        )}
+
         {/* Templates Button */}
         {onOpenTemplates && (
           <button

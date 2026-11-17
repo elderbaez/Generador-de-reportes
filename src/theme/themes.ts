@@ -6,6 +6,7 @@
    ===================================================================== */
 
 import { scopeCustomCss } from './advanced';
+import { SHOWCASE } from './showcaseThemes';
 import { ThemeAsset, assetVarLines, assetPlacementCss } from './assets';
 
 export type ThemeColorKey =
@@ -310,6 +311,16 @@ export const BUILT_IN_THEMES: ReportTheme[] = [
     text: '#2a1a15',
   }),
 ];
+
+// Estilos radicalmente distintos, para mostrar lo que pueden hacer los temas (ver showcaseThemes.ts)
+BUILT_IN_THEMES.push(
+  ...SHOWCASE.map((t): ReportTheme => ({
+    id: t.id, name: t.name, builtIn: true,
+    colors: { ...OBS_COLOR_DEFAULTS, ...t.colors },
+    fonts: { body: t.fonts.body, title: t.fonts.title, num: t.fonts.num ?? baseFonts().num },
+    radius: t.radius, barSubAuto: false, customCss: t.css,
+  })),
+);
 
 export const DEFAULT_THEME = BUILT_IN_THEMES[0];
 

@@ -16,6 +16,7 @@ import {
   DEFAULT_OBSERVATIONS,
   DEFAULT_BLOCKS,
 } from './defaultData';
+import { getCatalogTemplates } from './templateCatalog';
 
 export interface ReportTemplateData {
   projectData: ProjectData;
@@ -49,6 +50,7 @@ const STORAGE_KEY = 'a4_report_user_templates_v1';
  */
 export function getBuiltInTemplates(): ReportTemplate[] {
   return [
+    ...getCatalogTemplates(),
     {
       id: 'builtin-standard',
       name: 'Reporte Semanal Estándar de Obra',
@@ -259,4 +261,9 @@ export function clearLastTemplateId() {
 export function findTemplateById(id: string | null): ReportTemplate | null {
   if (!id) return null;
   return [...getBuiltInTemplates(), ...getSavedTemplates()].find((t) => t.id === id) ?? null;
+}
+
+/** La ventana de bienvenida se muestra al iniciar salvo que el usuario la haya desactivado. */
+export function shouldShowWelcome(): boolean {
+  try { return localStorage.getItem('a4_report_welcome_hidden_v1') !== '1'; } catch { return true; }
 }
