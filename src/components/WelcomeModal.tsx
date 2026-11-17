@@ -68,10 +68,10 @@ export const WelcomeModal: React.FC<Props> = ({ onSelectTemplate, onImportJson, 
           {shown.map((t) => (
             <button key={t.id} type="button" onClick={() => pick(t)}
               className="group text-left bg-white rounded-xl border border-slate-200 hover:border-[#0b455b] hover:shadow-lg transition-all p-3 flex flex-col gap-2.5 cursor-pointer">
-              <div className="bg-slate-100 rounded-lg py-3 flex justify-center">
+              <div className="bg-slate-100 rounded-lg py-3 flex justify-center items-center" style={{ minHeight: 230 }}>
                 {t.id === BLANK_ID
                   ? <div className="bg-white shadow-md ring-1 ring-slate-300/70 flex items-center justify-center text-slate-400" style={{ width: 150, aspectRatio: '210 / 297' }}><FilePlus2 className="w-8 h-8" /></div>
-                  : <TemplateThumb blocks={t.data.blocks} photoColumns={t.data.photoColumns} />}
+                  : <TemplateThumb blocks={t.data.blocks} photoColumns={t.data.photoColumns} theme={t.data.theme} pageSetup={t.data.pageSetup} />}
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wide text-[#0b455b]/70">{t.category || 'General'}{!t.isBuiltIn ? ' · mía' : ''}</span>

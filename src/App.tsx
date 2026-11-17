@@ -189,7 +189,7 @@ export default function App() {
   const [selectedRubricIds, setSelectedRubricIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('blocks');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState<boolean>(false);
-  const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(() => shouldShowWelcome());
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(() => shouldShowWelcome() && !getLastTemplateId());
   // Tema del informe (colores, fuentes, forma): se aplica en vivo y se recuerda entre sesiones
   const [theme, setTheme] = useState<ReportTheme>(() => loadCurrentTheme());
   const [isThemeOpen, setIsThemeOpen] = useState<boolean>(false);
