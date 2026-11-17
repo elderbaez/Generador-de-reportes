@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { stripRefTags } from '../../utils/refs';
 import {
   FilePlus2, Crop, Scissors, ChevronLeft, ChevronRight, Trash2, CornerDownLeft, Loader2, FileWarning, Layers, Pencil,
@@ -7,8 +7,9 @@ import { DocItem, DocEdge, MarkupItem } from '../../types';
 import { SectionHeaderBanner } from '../SectionHeaderBanner';
 import { EditDock, DockButton, DockSlider, DockCheck } from '../EditDock';
 import { EditableCell } from '../table/NotionTable';
-import { DocumentInsertModal, DocInsertResult } from '../DocumentInsertModal';
-import { DocAnnotationModal } from '../DocAnnotationModal';
+import type { DocInsertResult } from '../DocumentInsertModal';
+const DocumentInsertModal = lazy(() => import('../DocumentInsertModal').then((m) => ({ default: m.DocumentInsertModal })));
+const DocAnnotationModal = lazy(() => import('../DocAnnotationModal').then((m) => ({ default: m.DocAnnotationModal })));
 import { DocAnnotationOverlay } from '../DocAnnotationOverlay';
 import { useZoneImages } from '../../utils/magnify';
 import { registerDocItem } from '../../utils/pdfVector';
@@ -494,23 +495,23 @@ export const DocumentBlock: React.FC<DocumentBlockProps> = ({
       )}
 
       {modal && (
-        <DocumentInsertModal
+        <Suspense fallback={null}><DocumentInsertModal
           editItem={modal.edit || null}
           initialFile={modal.file || null}
           onCancel={() => setModal(null)}
           onConfirm={handleConfirm}
-        />
+        /></Suspense>
       )}
 
       {annotateItem && (
-        <DocAnnotationModal
+        <Suspense fallback={null}><DocAnnotationModal
           item={annotateItem}
           onClose={() => setAnnotateItem(null)}
           onSave={(markup: MarkupItem[]) => {
             patchItem(annotateItem.id, { markup });
             setAnnotateItem(null);
           }}
-        />
+        /></Suspense>
       )}
     </section>
   );
